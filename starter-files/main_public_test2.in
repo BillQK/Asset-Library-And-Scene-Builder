@@ -1,0 +1,12 @@
+import_img imgs/crabster.jpg
+rename_img crabster.jpg crabster
+
+list_albums
+create_album spam
+add_to_album spam crabster
+sort_album spam
+list_albums
+print_album spam
+remove_from_album spam crabster
+delete_album spam
+list_albums

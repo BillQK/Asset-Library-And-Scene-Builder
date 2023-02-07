@@ -1,0 +1,10 @@
+not_a_command
+list_imgs
+import_img imgs/crabster.jpg
+rename_img crabster.jpg crabster
+list_imgs
+query_imgs crabster
+remove_img crabster
+list_imgs
+
+quit
