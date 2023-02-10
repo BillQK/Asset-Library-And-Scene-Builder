@@ -9,9 +9,10 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <map>
 // Add any additional #includes here
-
-namespace cs3520 {
+namespace cs3520
+{
   // This is a "forward declaration" of the Image class. It lets us put the
   // class definition farther down in the file, as long as we only need to
   // use the Image type with pointers or references.
@@ -32,7 +33,7 @@ namespace cs3520 {
   // TASK: Examine the available member functions in the Image class, then
   // implement this overload in asset_lib.cpp.
   // Consider why we want this overload and where it simplifies our code.
-  std::ostream& operator<<(std::ostream& os, const std::shared_ptr<const Image>& img_ptr);
+  std::ostream &operator<<(std::ostream &os, const std::shared_ptr<const Image> &img_ptr);
 
   // Forward declaration of the Album struct.
   // See the struct definition below for additional details.
@@ -43,7 +44,8 @@ namespace cs3520 {
   //
   // TASK: Implement all of the public methods of this class in asset_lib.cpp.
   // Unless specified otherwise, those methods should only use constant space.
-  class Library {
+  class Library
+  {
   public:
     // Returns a vector of pointers to all images in the library,
     // sorted lexicographically by image name.
@@ -63,7 +65,7 @@ namespace cs3520 {
     //
     // This function does not modify the file system.
     //
-    // See https://en.cppreference.com/w/cpp/filesystem for information on
+    // See https://en.cppreference.coImagem/w/cpp/filesystem for information on
     // how to check if a file exists in the filesystem.
     //
     // Throws InvalidUserInputException with the message "Couldn't find file " + file_path
@@ -77,7 +79,7 @@ namespace cs3520 {
     // - O(log(n)) to check whether the image name is already in use
     // - O(n) to import the image,
     //   where n=number of images in the library
-    void import_image(const std::string& file_path);
+    void import_image(const std::string &file_path);
 
     // Returns a pointer to the image with the specified name.
     //
@@ -85,7 +87,7 @@ namespace cs3520 {
     // if that image does not exist in the library.
     //
     // Runtime upper bound: O(log(n)), n=number of images in the library
-    std::shared_ptr<const Image> get_image(const std::string& name) const;
+    std::shared_ptr<const Image> get_image(const std::string &name) const;
 
     // You may use *one* range-based for-loop in this memeber function (in
     // addition to calls to STL algorithms).
@@ -103,7 +105,7 @@ namespace cs3520 {
     // where n=number of images in the library,
     //       a=number of albums in the library,
     //       s=number of images in the largest album the image is a part of.
-    void remove_image(const std::string& name);
+    void remove_image(const std::string &name);
 
     // Renames the specified image in the library.
     // Does not modify the file system.
@@ -116,14 +118,14 @@ namespace cs3520 {
     // InvalidUserInputException with the message "Image " + name + " already exists".
     //
     // Runtime upper bound: O(log(n)), n=number of images in the library
-    void rename_image(const std::string& current_name, const std::string& new_name);
+    void rename_image(const std::string &current_name, const std::string &new_name);
 
     // Returns a vector of pointers to images whose names contain the given query string,
     // sorted lexicographically by image name.
     //
     // Runtime upper bound: O(n), n=number of images in the library
     // Space upper bound: O(n), n=number of images in the library
-    std::vector<std::shared_ptr<const Image>> query_images(const std::string& query) const;
+    std::vector<std::shared_ptr<const Image>> query_images(const std::string &query) const;
 
     // Returns a vector containing the names of every album in the library,
     // sorted lexicographically by album name.
@@ -138,7 +140,7 @@ namespace cs3520 {
     // if an album with that name does not exist in the library.
     //
     // Runtime upper bound: O(log(a)), a=number of albums in the library.
-    const Album& get_album(const std::string& album_name) const;
+    const Album &get_album(const std::string &album_name) const;
 
     // Creates a new album in the library with the given name.
     //
@@ -150,18 +152,18 @@ namespace cs3520 {
     // - O(log(a)) to check whether an album with that name exists
     // - O(a) to add the new album to the library,
     //   where a=number of albums in the library.
-    void create_album(const std::string& album_name);
+    void create_album(const std::string &album_name);
 
     // Removes the album with the given name from the library.
     //
     // Throws InvalidUserInputException with the message "Album " + name + " not found"
-    // if an album with that name does not exist.
+    // if an album with that name does not exist.1
     //
     // Runtime upper bounds:
     // - O(log(a)) to check whether an album with that name exists
     // - O(a) to remove the album from the library,
     //   where a=number of albums in the library.
-    void delete_album(const std::string& album_name);
+    void delete_album(const std::string &album_name);
 
     // Adds the specified image to the end of the specified album.
     // Note: The images in an album are stored in the order they are
@@ -185,7 +187,7 @@ namespace cs3520 {
     // - O(s) to check whether the image is already part of the album,
     //   s=number of images in the requested album
     // - O(1) (amortized) to add the image to the album.
-    void add_to_album(const std::string& album_name, const std::string& img_name);
+    void add_to_album(const std::string &album_name, const std::string &img_name);
 
     // Removes the specified image from the specified album.
     //
@@ -201,7 +203,7 @@ namespace cs3520 {
     // - O(s) to check whether the image is already part of the album,
     //   s=number of images in the requested album
     // - O(s) to remove the image from the album, s=number of images in the requested album
-    void remove_from_album(const std::string& album_name, const std::string& img_name);
+    void remove_from_album(const std::string &album_name, const std::string &img_name);
 
     // Sorts the images in the album with the specified name.
     //
@@ -211,39 +213,52 @@ namespace cs3520 {
     // Runtime upper bounds:
     // - O(log(a)) to find the album, a=number of albums in the library
     // - O(slog(s)) to sort the images in the album, s=number of images in the requested album.
-    void sort_album(const std::string& album_name);
+    void sort_album(const std::string &album_name);
 
   private:
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Declare any private member variables, private member functions,
     // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
+    std::vector<Album> m_albums;
+    std::vector<std::shared_ptr<Image>> m_images; 
+
   };
 
   // Stores metadata (e.g., file path, in-library name) for an image imported
   // into the library.
   // You should implement the one constructor for this class inline (i.e., in this file).
-  class Image {
+  class Image 
+  {
   public:
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Implement a constructor that takes in a std::filesystem::path and initializes
     // the Image's member variables. You must decide whether to take in the
     // path variable by value, pointer, or reference.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
+    
+    Image();
+    
+    Image(std::filesystem::path path); 
+    
 
-    const std::string& get_name() const {
+    const std::string &get_name() const
+    {
       return m_name;
     }
 
-    const std::filesystem::path& get_path() const {
+    const std::filesystem::path &get_path() const
+    {
       return m_path;
     }
 
-    void rename(const std::string& new_name) {
+    void rename(const std::string &new_name)
+    {
       m_name = new_name;
     }
 
-    std::ostream& print(std::ostream& os) const {
+    std::ostream &print(std::ostream &os) const
+    {
       os << get_name() << " (" << m_path << ")";
       return os;
     }
@@ -255,14 +270,16 @@ namespace cs3520 {
 
   // Albums are used to let the user group Images into categories.
   // The implementation of this struct is provided for you.
-  struct Album {
+  struct Album
+  {
     std::string name;
     std::vector<std::shared_ptr<Image>> images;
 
-    Album(const std::string& name): name(name) {}
+    Album(const std::string &name) : name(name) {}
 
     // This operator overload lets us sort albums by name.
-    bool operator<(const Album& rhs) const {
+    bool operator<(const Album &rhs) const
+    {
       return name < rhs.name;
     }
   };

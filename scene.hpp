@@ -22,24 +22,30 @@ namespace cs3520 {
   class Scene {
   public:
     // Adds the given object to the scene.
-    // Since SceneObjects are created with unique IDs not specified by the user,
-    // this method does not check to see whether an object with the same ID
+    // SceneObjects should be created with unique IDs not specified by the user.
+    // This method does not check to see whether an object with the same ID
     // exists in the scene. It is up to the programmer to ensure that no duplicate
     // objects are added to the scene.
     //
-    // Runtime upper bounds: O(n), n=number of objects in the scene
+    // Runtime upper bound: O(n), n=number of objects in the scene
     void add_scene_obj(std::unique_ptr<SceneObject> scene_obj);
 
     // Removes the object with the specified ID from the scene.
     //
     // Throws InvalidUserInputException with the message "Scene object " + id + " not found"
     // if no such object is in the scene.
+    //
+    // Runtime upper bounds:
+    // - O(log(n)) to find the object, n=number of objects in the scene
+    // - O(n) to remove object
     void remove_scene_obj(int id);
 
     // Sets the position of the object with the specified ID to the given value.
     //
     // Throws InvalidUserInputException with the message "Scene object " + id + " not found"
     // if no such object is in the scene.
+    //
+    // Runtime upper bound: O(log(n)), n=number of objects in the scene
     void set_scene_obj_position(int id, sf::Vector2f position);
 
     // Render the scene to the given window by drawing all objects in the scene.
@@ -47,8 +53,9 @@ namespace cs3520 {
 
     // Prints a text represenation of the scene by printing all objects in the scene
     // (using SceneObject::print) to the given stream in order of ID.
-    // Each printed scene object should be separated by a newline, and there
-    // should be a trailing newline at the end.
+    // Each printed scene object should be followed by a newline.
+    //
+    // Runtime upper bound: O(n), n=number of objects in the scene
     void print(std::ostream& os) const;
 
   private:
@@ -94,11 +101,17 @@ namespace cs3520 {
     //
     // Throws InvalidUserInputException with the message
     // "Scene object template " + name + " not found" if no such template exists.
+    //
+    // Runtime upper bound: O(log(n)), n=number of templates
     std::unique_ptr<SceneObject> instantiate_scene_obj(
-      const std::string& scene_object_template_name) const;
+      const std::string& scene_object_template_name,
+      int scene_object_id
+    ) const;
 
   private:
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
+    // Declare any private member variables, private member functions,
+    // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
   };
 
@@ -139,7 +152,7 @@ namespace cs3520 {
     // Constructs a SceneObject from the given template.
     // It is up to you to decide whether to put the implementation of
     // this constructor here in the .hpp file or in the .cpp file.
-    SceneObject(std::shared_ptr<SceneObjectTemplate> tmpl);
+    SceneObject(int id, std::shared_ptr<SceneObjectTemplate> tmpl);
 
     // The implementation of get_id is provided for you.
     int get_id() const { return m_id; }
@@ -180,8 +193,6 @@ namespace cs3520 {
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Add any private member variables you need here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-
-    static int object_id;
   };
 }
 

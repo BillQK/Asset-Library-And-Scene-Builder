@@ -3,8 +3,13 @@
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Red);
+    // sf::CircleShape shape(100.f);
+    // shape.setFillColor(sf::Color::Red);
+    sf::Texture texture; 
+    texture.loadFromFile("lobster.png"); 
+    sf::Sprite sprite(texture);
+    sprite.setPosition(400,300);
+
 
     while (window.isOpen())
     {
@@ -16,7 +21,7 @@ int main()
         }
 
         window.clear();
-        window.draw(shape);
+        window.draw(sprite);
         window.display();
     }
 

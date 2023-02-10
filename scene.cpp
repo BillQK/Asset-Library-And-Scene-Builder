@@ -27,11 +27,5 @@ namespace cs3520 {
 
   // --------------------------------------------------------------------------------------------
 
-  // Non-const static member variables have to be initialized in the .cpp file.
-  // Note that the first SceneObject created should have an ID of 1.
-  // You can use the prefix-increment operator (++i) to accomplish this
-  // in a member initializer list.
-  int SceneObject::object_id = 0;
-
   // TASK: Implement the SceneObject member functions.
 }
