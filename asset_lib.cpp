@@ -107,7 +107,6 @@ namespace cs3520
 
   // TASK: Implement the Library member functions.
 
-  Image::Image() : m_path(""), m_name("") {}
   Image::Image(filesystem::path fs) : m_path(fs)
   {
     m_name = fs.filename().string();
@@ -149,7 +148,7 @@ namespace cs3520
     }
 
     // Import the image
-    m_images.push_back(make_shared<Image>(file_path));
+    m_images.insert(make_shared<Image>(file_path));
   }
 
   shared_ptr<const Image> Library::get_image(const string &name) const
@@ -160,7 +159,6 @@ namespace cs3520
 
   void Library::remove_image(const string &name)
   {
-    // TODO: exception
     auto it = find_image(m_images, name);
     m_images.erase(it);
     string album_contains_image = find_album_by_image_name(name, m_albums);

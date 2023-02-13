@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <set>
 // Add any additional #includes here
 namespace cs3520
 {
@@ -221,7 +222,7 @@ namespace cs3520
     // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
     std::vector<Album> m_albums;
-    std::vector<std::shared_ptr<Image>> m_images; 
+    std::set<std::shared_ptr<Image>> m_images; 
 
   };
 
@@ -236,9 +237,6 @@ namespace cs3520
     // the Image's member variables. You must decide whether to take in the
     // path variable by value, pointer, or reference.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-    
-    Image();
-    
     Image(std::filesystem::path path); 
     
 

@@ -11,22 +11,7 @@ TEST(write_your_tests_here) {
   ASSERT_TRUE(true);
 }
 
-TEST(test_image_constructor) {
-  // Empty image constructor
-  Image img = Image(); 
-  ASSERT_EQUAL(img.get_name(), ""); 
-  ASSERT_EQUAL(img.get_path(), ""); 
 
-  std::ostringstream actual;
-  std::ostringstream expected;
-
-  img.print(actual); 
-
-  expected << " (\"\")";
-
-  ASSERT_EQUAL(expected.str(), actual.str());
-
-}
 
 TEST(test_image_constructor_with_path) {
   // Create a test image 
