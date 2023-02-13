@@ -48,18 +48,14 @@ namespace
   template <typename Container>
   auto find_image(Container &images, const string &name)
   {
-    vector<cs3520::Image>::iterator ptr;
+    auto it = find_if(images.begin(), images.end(), [&name](const std::shared_ptr<cs3520::Image> &image)
+                      { return image->get_name() == name; });
 
-    lower_bound(images.begin(), images.end(), name, ptr);
-
-    if (ptr != images.end())
+    if (it == images.end())
     {
-      return ptr;
+      throw cs3520::InvalidUserInputException("Image '" + name + "' not found in the container");
     }
-    if (ptr == images.end())
-    {
-      throw cs3520::InvalidUserInputException("Image not found");
-    }
+    return it;
   }
 
   // Suggested helper function for looking up Images.
@@ -71,18 +67,14 @@ namespace
   template <typename Container>
   auto find_album(Container &albums, const string &name)
   {
-    vector<cs3520::Album>::iterator ptr;
-    lower_bound(
-        albums.begin(), albums.end(),
-        name, ptr);
-    if (ptr != albums.end())
+    auto it = find_if(albums.begin(), albums.end(), [&name](const cs3520::Album &album)
+                      { return album.name == name; });
+
+    if (it == albums.end())
     {
-      return ptr;
+      throw cs3520::InvalidUserInputException("Album '" + name + "' not found in the container");
     }
-    if (ptr == albums.end())
-    {
-      throw cs3520::InvalidUserInputException("Album not found");
-    }
+    return it;
   }
 }
 
@@ -91,6 +83,8 @@ namespace cs3520
   ostream &operator<<(ostream &os, const shared_ptr<const Image> &img_ptr)
   {
     // TASK: Implement this stream insertion operator overload.
+    os << "Image(" << img_ptr->get_name() << ", " << img_ptr->get_path() << ")";
+    return os;
   }
 
   // TASK: Implement the Library member functions.
@@ -98,6 +92,52 @@ namespace cs3520
   Image::Image() : m_path(""), m_name("") {}
   Image::Image(std::filesystem::path fs) : m_path(fs)
   {
-    m_name = fs.filename();
+    m_name = fs.filename().string();
   }
+
+  std::vector<std::shared_ptr<const Image>> Library::list_images() const
+  {
+    vector<shared_ptr<const Image>> images;
+
+    // Copy all images into the vector.
+    copy(m_images.begin(), m_images.end(), back_inserter(images));
+
+    // Sort the vector of images by name.
+    sort(images.begin(), images.end(),
+         [](const shared_ptr<const Image> &a, const shared_ptr<const Image> &b)
+         {
+           return a->get_name() < b->get_name();
+         });
+
+    return images;
+  }
+
+  void Library::import_image(const std::string &file_path)
+  {
+    // Check if the file exists
+    if (!std::filesystem::exists(file_path))
+    {
+      throw InvalidUserInputException("Couldn't find file " + file_path);
+    }
+
+    // Get the name of the file
+    std::string file_name = std::filesystem::path(file_path).filename().string();
+
+    // Check if the name is already in use
+    if (std::any_of(m_images.begin(), m_images.end(), [&file_name](const auto &image)
+                    { return std::filesystem::path(image->get_path()).filename().string() == file_name; }))
+    {
+      throw InvalidUserInputException("Image " + file_name + " already exists");
+    }
+
+    // Import the image
+    m_images.push_back(std::make_shared<Image>(file_path));
+  }
+
+  std::shared_ptr<const Image> Library::get_image(const std::string &name) const
+  {
+    auto it = find_image(m_images, name);
+    return *it;
+  }
+
 }
