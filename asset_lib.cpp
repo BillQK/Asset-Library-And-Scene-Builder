@@ -146,9 +146,13 @@ namespace cs3520
     {
       throw InvalidUserInputException("Image " + file_name + " already exists");
     }
-
-    // Import the image
-    m_images.insert(make_shared<Image>(file_path));
+    // Import the image at the correct position based on filename order
+    auto insert_pos = std::lower_bound(m_images.begin(), m_images.end(), file_name,
+                                       [](const shared_ptr<Image> &image, const string &name)
+                                       {
+                                         return image->get_name() < name;
+                                       });
+    m_images.insert(insert_pos, make_shared<Image>(file_path));
   }
 
   shared_ptr<const Image> Library::get_image(const string &name) const
@@ -199,6 +203,26 @@ namespace cs3520
         back_inserter(result), [](const Album &album)
         { return album.name; });
     return result;
+  }
+
+  const Album &Library::get_album(const std::string &album_name) const
+  {
+    auto it = find_album(m_albums, album_name);
+    return *it;
+  }
+
+  void Library::create_album(const std::string &album_name)
+  {
+    Album ablum = Album(album_name);
+
+    auto it = find_album(m_albums, album_name);
+
+    if (it != m_albums.end())
+    {
+      throw InvalidUserInputException("Album " + album_name + " already exists");
+    }
+
+    m_albums.push_back(ablum);
   }
 
   void Library::delete_album(const std::string &album_name)

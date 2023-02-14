@@ -4,18 +4,19 @@
 #include "unit_test_framework.h"
 #include "exceptions.hpp"
 
-using namespace cs3520; 
+using namespace cs3520;
 
 // Add your Library unit tests to this file
-TEST(write_your_tests_here) {
+TEST(write_your_tests_here)
+{
   ASSERT_TRUE(true);
 }
-
-
-
-TEST(test_image_constructor_with_path) {
-  // Create a test image 
-  Image img = Image("/acd.pdf"); 
+//----------------------------------------------------------------
+// Image tests
+TEST(test_image_constructor_with_path)
+{
+  // Create a test image
+  Image img = Image("/acd.pdf");
   ASSERT_EQUAL(img.get_name(), "acd.pdf");
   ASSERT_EQUAL(img.get_path(), "/acd.pdf");
 
@@ -24,70 +25,96 @@ TEST(test_image_constructor_with_path) {
 
   img.print(actual);
 
-  expected << "acd.pdf" << " (\"/acd.pdf\")";
+  expected << "acd.pdf"
+           << " (\"/acd.pdf\")";
 
   ASSERT_EQUAL(expected.str(), actual.str());
 }
 
-TEST(test_import_images) {
+// ----------------------------------------------------------------
+// Library Test Cases
+TEST(test_import_images_correct)
+{
   Library library = Library();
 
-  library.import_image("/home/user/acd/acd.pdf");
-  library.import_image("/home/user/acd/losbter.pdf");
-  library.import_image("/home/user/acd/ddd.pdf");
-  library.import_image("/home/user/acd/dcb.pdf");
-  
-  // ASSERT_EQUAL(library.get_image("acd.pdf"), Image("/home/user/acd/acd.pdf"));
-  // ASSERT_EQUAL(library.get_image("losbter.pdf"), Image("/home/user/acd/losbter.pdf"));
-  // ASSERT_EQUAL(library.get_image("ddd.pdf"), Image("/home/user/acd/ddd.pdf"));
-  // ASSERT_EQUAL(library.get_image("dcb.pdf"), Image("/home/user/acd/dcb.pdf"));
-  
-  
+  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/crabster.jpg");
+  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
+  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster.png");
+  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/trogdor1.png");
+
+  ASSERT_EQUAL(library.list_images().size(), 4);
 }
 
-TEST(test_find_image){ 
-  
-}
-
-TEST(test_list_images){
-  Library library = Library(); 
-  library.import_image("/home/path/to/acd.pdf"); 
-  library.import_image("/home/path/to/acd.jpg"); 
-  library.import_image("/home/path/to/ad.pdf");
-
-  auto list_images = library.list_images(); 
-
-  ASSERT_EQUAL(list_images.size(),3); 
-  
-}
-
-TEST(test_list_images_failed) {
+TEST(test_import_images_failed_images_exists)
+{
   Library library = Library();
-  try {
-    library.import_image("/home/path/to/acd.pdf");
-    library.import_image("/home/path/to/acd.jpg");
-    library.import_image("/home/path/to/acd.pdf");
+  try
+  {
+    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/crabster.jpg");
+    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
+    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
+    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/trogdor1.png");
     // The test should fail here, as an exception should be thrown
     // when importing the third image with the same name
     ASSERT_TRUE(false);
-  } catch (InvalidUserInputException& e) {
+  }
+  catch (InvalidUserInputException &e)
+  {
     // Check if the exception message is correct
-    ASSERT_EQUAL(e.what(), "Image already imported");
+    ASSERT_EQUAL("Image lobster_link.jpg already exists",
+                 std::string(e.what()));
   }
 }
 
-TEST(test_get_image){
+TEST(test_import_images_failed_images_path_does_not_exist)
+{
+  Library library = Library();
+  try
+  {
+    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/crabster.jpg");
+    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
+    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.png");
+    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/trogdor1.png");
+    // The test should fail here, as an exception should be thrown
+    // when importing the third image with the same name
+    ASSERT_TRUE(false);
+  }
+  catch (InvalidUserInputException &e)
+  {
+    // Check if the exception message is correct
+    ASSERT_EQUAL("Couldn't find file /home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.png",
+                 std::string(e.what()));
+  }
+}
 
+TEST(test_list_images)
+{
+  Library library = Library();
+  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/crabster.jpg");
+  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster.png");
+  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
+  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/trogdor1.png");
+
+  std::vector<std::shared_ptr<const cs3520::Image>> list_images = library.list_images();
+
+  ASSERT_EQUAL(list_images.size(), 4);
+  ASSERT_EQUAL(list_images.at(0)->get_name(), "crabster.jpg");
+  ASSERT_EQUAL(list_images.at(2)->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(list_images.at(1)->get_name(), "lobster.png");
+  ASSERT_EQUAL(list_images.at(3)->get_name(), "trogdor1.png");
+}
+
+TEST(test_get_image)
+{
 }
 
 // TEST(test_find_image) {
-//   Image img = Image(); 
+//   Image img = Image();
 //   Image img2 = Image(")asdf");
 
-//   std::vector<Image> images = {img, img2}; 
+//   std::vector<Image> images = {img, img2};
 
 //   std::iterator img_found = find_image(images, ")asdf");
-
 
 // }
 
@@ -109,6 +136,5 @@ TEST(test_get_image){
 //     ASSERT_EQUAL("Expected message"s, e.what());
 //   }
 // }
-
 
 TEST_MAIN()
