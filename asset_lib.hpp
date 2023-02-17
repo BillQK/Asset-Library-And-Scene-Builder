@@ -222,14 +222,21 @@ namespace cs3520
     // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
     std::vector<Album> m_albums;
-    std::set<std::shared_ptr<Image>> m_images; 
+    // struct ImageCompare
+    // {
+    //   using is_transparent = void;
 
+    //   bool operator()(const Image &a, const std::string &name) const;
+
+    //   bool operator()(const Image &a, const std::string &name) const; 
+    // };
+    std::set<std::shared_ptr<Image>> m_images;
   };
 
   // Stores metadata (e.g., file path, in-library name) for an image imported
   // into the library.
   // You should implement the one constructor for this class inline (i.e., in this file).
-  class Image 
+  class Image
   {
   public:
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
@@ -237,8 +244,7 @@ namespace cs3520
     // the Image's member variables. You must decide whether to take in the
     // path variable by value, pointer, or reference.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-    Image(std::filesystem::path path); 
-    
+    Image(std::filesystem::path path);
 
     const std::string &get_name() const
     {

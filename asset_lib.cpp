@@ -48,12 +48,12 @@ namespace
   template <typename Container>
   auto find_image(Container &images, const string &name)
   {
-    auto it = find_if(images.begin(), images.end(), [&name](const shared_ptr<cs3520::Image> &image)
-                      { return image->get_name() == name; });
+    auto it = lower_bound(images.begin(), images.end(), name, [](const auto &image, const string &name)
+                          { return image->get_name() < name; });
 
     if (it == images.end())
     {
-      throw cs3520::InvalidUserInputException("Image '" + name + "' not found in the container");
+      throw cs3520::InvalidUserInputException("Image '" + name + "' not found");
     }
     return it;
   }
@@ -67,12 +67,12 @@ namespace
   template <typename Container>
   auto find_album(Container &albums, const string &name)
   {
-    auto it = find_if(albums.begin(), albums.end(), [&name](const cs3520::Album &album)
-                      { return album.name == name; });
+    auto it = lower_bound(albums.begin(), albums.end(), name, [](const auto &album, const string &name)
+                          { return album.name < name; });
 
     if (it == albums.end())
     {
-      throw cs3520::InvalidUserInputException("Album '" + name + "' not found in the container");
+      throw cs3520::InvalidUserInputException("Album " + name + " not found");
     }
     return it;
   }
@@ -80,18 +80,18 @@ namespace
   // Find the album by image name
   string find_album_by_image_name(const string &image_name, const vector<cs3520::Album> &albums)
   {
-    auto album_iter = find_if(albums.begin(), albums.end(), [&image_name](const cs3520::Album &album)
-                              { return any_of(album.images.begin(),
-                                              album.images.end(),
-                                              [&image_name](const shared_ptr<cs3520::Image> &image)
-                                              { return image->get_name() == image_name; }); });
+    auto album_iter = lower_bound(albums.begin(), albums.end(), image_name, [](const cs3520::Album &album, const string image_name)
+                                  { return any_of(album.images.begin(),
+                                                  album.images.end(),
+                                                  [&image_name](const shared_ptr<cs3520::Image> &image)
+                                                  { return image->get_name() == image_name; }); });
     if (album_iter != albums.end())
     {
       return album_iter->name;
     }
     else
     {
-      throw cs3520::InvalidUserInputException("Image '" + image_name + "' not found in any albums");
+      throw cs3520::InvalidUserInputException("Image " + image_name + " not found");
     }
   }
 }
@@ -119,13 +119,6 @@ namespace cs3520
     // Copy all images into the vector.
     copy(m_images.begin(), m_images.end(), back_inserter(images));
 
-    // Sort the vector of images by name.
-    sort(images.begin(), images.end(),
-         [](const shared_ptr<const Image> &a, const shared_ptr<const Image> &b)
-         {
-           return a->get_name() < b->get_name();
-         });
-
     return images;
   }
 
@@ -142,16 +135,17 @@ namespace cs3520
 
     // Check if the name is already in use
     if (any_of(m_images.begin(), m_images.end(), [&file_name](const auto &image)
-               { return filesystem::path(image->get_path()).filename().string() == file_name; }))
+               { return image->get_path().filename().string() == file_name; }))
     {
       throw InvalidUserInputException("Image " + file_name + " already exists");
     }
     // Import the image at the correct position based on filename order
     auto insert_pos = std::lower_bound(m_images.begin(), m_images.end(), file_name,
-                                       [](const shared_ptr<Image> &image, const string &name)
+                                       [](const shared_ptr<Image> &image, const string &file_name)
                                        {
-                                         return image->get_name() < name;
+                                         return image->get_name() < file_name;
                                        });
+
     m_images.insert(insert_pos, make_shared<Image>(file_path));
   }
 
@@ -187,7 +181,7 @@ namespace cs3520
   {
     vector<shared_ptr<const Image>> result;
     copy_if(m_images.begin(), m_images.end(), back_inserter(result),
-            [query](const auto &img)
+            [&query](const auto &img)
             { return str_contains(img->get_name(), query); });
 
     sort(result.begin(), result.end(), [](const auto &img1, const auto &img2)

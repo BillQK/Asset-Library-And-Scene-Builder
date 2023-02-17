@@ -1,9 +1,11 @@
 #include <iostream>
+#include <string>
 
 #include "asset_lib.hpp"
 #include "unit_test_framework.h"
 #include "exceptions.hpp"
 
+using std::operator""s;
 using namespace cs3520;
 
 // Add your Library unit tests to this file
@@ -37,10 +39,10 @@ TEST(test_import_images_correct)
 {
   Library library = Library();
 
-  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/crabster.jpg");
-  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
-  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster.png");
-  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/trogdor1.png");
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster_link.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
 
   ASSERT_EQUAL(library.list_images().size(), 4);
 }
@@ -50,10 +52,10 @@ TEST(test_import_images_failed_images_exists)
   Library library = Library();
   try
   {
-    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/crabster.jpg");
-    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
-    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
-    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/trogdor1.png");
+    library.import_image("imgs/crabster.jpg");
+    library.import_image("imgs/lobster_link.jpg");
+    library.import_image("imgs/lobster_link.jpg");
+    library.import_image("imgs/trogdor1.png");
     // The test should fail here, as an exception should be thrown
     // when importing the third image with the same name
     ASSERT_TRUE(false);
@@ -61,8 +63,8 @@ TEST(test_import_images_failed_images_exists)
   catch (InvalidUserInputException &e)
   {
     // Check if the exception message is correct
-    ASSERT_EQUAL("Image lobster_link.jpg already exists",
-                 std::string(e.what()));
+    ASSERT_EQUAL("Image lobster_link.jpg already exists"s,
+                 e.what());
   }
 }
 
@@ -71,10 +73,10 @@ TEST(test_import_images_failed_images_path_does_not_exist)
   Library library = Library();
   try
   {
-    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/crabster.jpg");
-    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
-    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.png");
-    library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/trogdor1.png");
+    library.import_image("imgs/crabster.jpg");
+    library.import_image("imgs/lobster_link.jpg");
+    library.import_image("imgs/lobster_link.png");
+    library.import_image("imgs/trogdor1.png");
     // The test should fail here, as an exception should be thrown
     // when importing the third image with the same name
     ASSERT_TRUE(false);
@@ -82,18 +84,18 @@ TEST(test_import_images_failed_images_path_does_not_exist)
   catch (InvalidUserInputException &e)
   {
     // Check if the exception message is correct
-    ASSERT_EQUAL("Couldn't find file /home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.png",
-                 std::string(e.what()));
+    ASSERT_EQUAL("Couldn't find file imgs/lobster_link.png"s,
+                 e.what());
   }
 }
 
 TEST(test_list_images)
 {
   Library library = Library();
-  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/crabster.jpg");
-  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster.png");
-  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/lobster_link.jpg");
-  library.import_image("/home/billngo/Work-Space/Asset-Library-And-Scene-Builder/imgs/trogdor1.png");
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
 
   std::vector<std::shared_ptr<const cs3520::Image>> list_images = library.list_images();
 
@@ -106,17 +108,57 @@ TEST(test_list_images)
 
 TEST(test_get_image)
 {
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  std::shared_ptr<const Image> crab = library.get_image("crabster.jpg");
+  std::shared_ptr<const Image> lobster = library.get_image("lobster.png");
+  std::shared_ptr<const Image> trogdor1 = library.get_image("trogdor1.png");
+  std::shared_ptr<const Image> lobster_link = library.get_image("lobster_link.jpg");
+
+  ASSERT_EQUAL(crab->get_name(), "crabster.jpg");
+  ASSERT_EQUAL(lobster->get_name(), "lobster.png");
+  ASSERT_EQUAL(trogdor1->get_name(), "trogdor1.png");
+  ASSERT_EQUAL(lobster_link->get_name(), "lobster_link.jpg");
 }
 
-// TEST(test_find_image) {
-//   Image img = Image();
-//   Image img2 = Image(")asdf");
+TEST(test_get_name_not_found)
+{
+  try
+  {
+    Library library = Library();
+    library.import_image("imgs/crabster.jpg");
+    library.import_image("imgs/lobster.png");
+    library.import_image("imgs/trogdor1.png");
+    library.import_image("imgs/lobster_link.jpg");
 
-//   std::vector<Image> images = {img, img2};
+    std::shared_ptr<const Image> crab = library.get_image("crabster.jpg");
+    std::shared_ptr<const Image> lobster = library.get_image("lobster.png");
+    std::shared_ptr<const Image> trogdor1 = library.get_image("trogdor1.png");
+    std::shared_ptr<const Image> lobster_link = library.get_image("lobster_link.png");
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Image lobster_link.png not found"s, e.what());
+  }
+}
 
-//   std::iterator img_found = find_image(images, ")asdf");
 
-// }
+TEST(test_remove_image)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.remove_image("crabster.jpg");
+
+  ASSERT_EQUAL(library.list_images().size(), 3);
+}
 
 // To write a test that checks whether an exception is thrown, use the following
 // pattern:
