@@ -175,9 +175,46 @@ TEST(test_remove_image_failed)
     library.import_image("imgs/lobster_link.jpg");
 
     library.remove_image("crabster.png");
-  } 
-  catch (InvalidUserInputException &e) {
+  }
+  catch (InvalidUserInputException &e)
+  {
     ASSERT_EQUAL("Image crabster.png not found"s, e.what());
+  }
+}
+
+TEST(test_rename_image)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.rename_image("crabster.jpg", "bestcrabster.jpg");
+
+  std::vector<std::shared_ptr<const cs3520::Image>> list_images = library.list_images();
+
+  ASSERT_EQUAL(list_images.at(0)->get_name(), "bestcrabster.jpg");
+  ASSERT_EQUAL(list_images.at(1)->get_name(), "lobster.png");
+  ASSERT_EQUAL(list_images.at(2)->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(list_images.at(3)->get_name(), "trogdor1.png");
+}
+
+TEST(test_rename_image_failed_name_exists)
+{
+  try
+  {
+    Library library = Library();
+    library.import_image("imgs/crabster.jpg");
+    library.import_image("imgs/lobster.png");
+    library.import_image("imgs/trogdor1.png");
+    library.import_image("imgs/lobster_link.jpg");
+
+    library.rename_image("crabster.jpg", "lobster.png");
+    ASSERT_TRUE(false)
+  }
+  catch (InvalidUserInputException &e){
+    ASSERT_EQUAL("Image lobster.png already exists"s, e.what())
   }
 }
 

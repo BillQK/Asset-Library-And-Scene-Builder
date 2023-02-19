@@ -53,9 +53,9 @@ namespace
         lower_bound(images.begin(), images.end(), name, [](const auto &image, const string &name)
                     { return image->get_name() < name; });
 
-    if (it == images.end())
+    if (it == images.end() || (*it)->get_name() != name)
     {
-      throw cs3520::InvalidUserInputException("Image '" + name + "' not found");
+      throw cs3520::InvalidUserInputException("Image " + name + " not found");
     }
     return it;
   }
@@ -73,7 +73,7 @@ namespace
                           [](const auto &album, const string &name)
                           { return album.name < name; });
 
-    if (it == albums.end())
+    if (it == albums.end() || it->name == name)
     {
       throw cs3520::InvalidUserInputException("Album " + name + " not found");
     }
@@ -176,11 +176,15 @@ namespace cs3520
     shared_ptr<Image> image = *it;
 
     // Check if the specified new name is already in use
-    auto it_new_name = find_image(m_images, new_name);
-    if (it_new_name != m_images.end())
+
+    auto new_it = lower_bound(m_images.begin(), m_images.end(), new_name, [](const auto &image, const string &name)
+                              { return image->get_name() < name; });
+
+    if (new_it != m_images.end() && (*new_it)->get_name() == new_name)
     {
       throw InvalidUserInputException("Image " + new_name + " already exists");
     }
+
     image->rename(new_name);
   }
 
