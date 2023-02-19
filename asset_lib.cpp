@@ -238,10 +238,12 @@ namespace cs3520
   {
     auto it = find_album(m_albums, album_name);
     auto image_it = find_image(m_images, img_name);
+    auto album_it = it->images;
 
     // check if image already exists in album list
-    auto image_check_in_album = find_image(it->images, img_name);
-    if (image_check_in_album != it->images.end())
+    auto image_check_in_album = lower_bound(album_it.begin(), album_it.end(), img_name, [](const auto &image, const string &name)
+                              { return image->get_name() < name; });
+    if (image_check_in_album != album_it.end() && (*image_check_in_album)->get_name() == img_name)
     {
       throw InvalidUserInputException("Image " + img_name +
                                       " already part of album " + album_name);

@@ -340,6 +340,225 @@ TEST(test_get_album_failed_album_does_not_exists)
   }
 }
 
+TEST(test_delete_album_album_not_found)
+{
+  try
+  {
+    Library library = Library();
+    library.import_image("imgs/crabster.jpg");
+    library.create_album("lobster_album");
+
+    library.delete_album("crab_album");
+    ASSERT_TRUE(false); // If exception is not thrown test fails
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Album crab_album not found"s, e.what());
+  }
+}
+
+TEST(test_delete_album_does_not_exist)
+{
+  try
+  {
+    Library library = Library();
+    library.import_image("imgs/crabster.jpg");
+    library.import_image("imgs/lobster.png");
+    library.import_image("imgs/trogdor1.png");
+    library.import_image("imgs/lobster_link.jpg");
+
+    library.create_album("lobster_album");
+    library.create_album("start_with_t");
+    library.create_album("crab");
+
+    library.delete_album("fish");
+    ASSERT_TRUE(false);
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Album fish not found"s, e.what());
+  }
+}
+
+TEST(test_delete_album)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.create_album("lobster_album");
+  library.create_album("start_with_t");
+  library.create_album("crab");
+
+  library.add_to_album("lobster_album", "lobster.png");
+  library.add_to_album("lobster_album", "lobster_link.jpg");
+  library.add_to_album("start_with_t", "trogdor1.png");
+  library.add_to_album("crab", "crabster.jpg");
+
+  library.delete_album("start_with_t");
+
+  // Verify that album was removed
+  try
+  {
+    library.get_album("start_with_t");
+    ASSERT_TRUE(false);
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Album start_with_t not found"s, e.what());
+  }
+
+  // Verify that image was not deleted
+  ASSERT_EQUAL(library.get_image("lobster.png")->get_name(), "lobster.png");
+  ASSERT_EQUAL(library.get_image("lobster_link.jpg")->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(library.get_image("crabster.jpg")->get_name(), "crabster.jpg");
+
+  // Verify that images were removed from album
+  try
+  {
+    Album lobster_album = library.get_album("lobster_album");
+    ASSERT_EQUAL(lobster_album.images.size(), 2);
+    ASSERT_EQUAL(lobster_album.images[0]->get_name(), "lobster.png");
+    ASSERT_EQUAL(lobster_album.images[1]->get_name(), "lobster_link.jpg");
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_TRUE(false);
+  }
+
+  try
+  {
+    Album crab_album = library.get_album("crab");
+    ASSERT_EQUAL(crab_album.images.size(), 1);
+    ASSERT_EQUAL(crab_album.images.at(0)->get_name(), "crabster.jpg");
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_TRUE(false);
+  }
+
+  // Verify that images were not deleted
+  ASSERT_EQUAL(library.get_image("lobster.png")->get_name(), "lobster.png");
+  ASSERT_EQUAL(library.get_image("lobster_link.jpg")->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(library.get_image("trogdor1.png")->get_name(), "trogdor1.png");
+  ASSERT_EQUAL(library.get_image("crabster.jpg")->get_name(), "crabster.jpg");
+}
+
+TEST(test_add_to_album)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.create_album("lobster_album");
+  library.create_album("start_with_t");
+  library.create_album("crab");
+
+  // Add image to album
+  library.add_to_album("lobster_album", "lobster.png");
+
+  // Verify image was added to album
+  ASSERT_EQUAL(library.get_album("lobster_album").images.size(), 1);
+  ASSERT_EQUAL(library.get_album("lobster_album").images[0]->get_name(), "lobster.png");
+
+  // Try to add same image to album again (should throw exception)
+  try
+  {
+    library.add_to_album("lobster_album", "lobster.png");
+    ASSERT_TRUE(false);
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Image lobster.png already part of album lobster_album"s, e.what());
+  }
+
+  // Add another image to album
+  library.add_to_album("lobster_album", "lobster_link.jpg");
+
+  // Verify second image was added to album
+  ASSERT_EQUAL(library.get_album("lobster_album").images.size(), 2);
+  ASSERT_EQUAL(library.get_album("lobster_album").images[1]->get_name(), "lobster_link.jpg");
+
+  // Try to add image to non-existent album (should throw exception)
+  try
+  {
+    library.add_to_album("nonexistent_album", "trogdor1.png");
+    ASSERT_TRUE(false);
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Album nonexistent_album not found"s, e.what());
+  }
+}
+
+TEST(test_remove_from_album)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+
+  library.create_album("lobster_album");
+  library.add_to_album("lobster_album", "lobster.png");
+  library.add_to_album("lobster_album", "trogdor1.png");
+  ASSERT_EQUAL(library.get_album("lobster_album").images.size(), 2);
+
+  library.remove_from_album("lobster_album", "lobster.png");
+  ASSERT_EQUAL(library.get_album("lobster_album").images.size(), 1);
+
+  try
+  {
+    library.get_album("non_existent_album");
+    ASSERT_TRUE(false);
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Album non_existent_album not found"s, e.what());
+  }
+
+  try
+  {
+    library.remove_from_album("lobster_album", "non_existent_image");
+    ASSERT_TRUE(false);
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Image non_existent_image not found"s, e.what());
+  }
+}
+TEST(test_sort_album)
+{
+  // create library instance and import some images
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  // create an album and add images to it
+  library.create_album("my_album");
+  library.add_to_album("my_album", "lobster.png");
+  library.add_to_album("my_album", "crabster.jpg");
+  library.add_to_album("my_album", "trogdor1.png");
+  library.add_to_album("my_album", "lobster_link.jpg");
+
+  // sort the album
+  library.sort_album("my_album");
+
+  // verify that the images in the album are sorted
+  std::vector<std::string> expected_order = {"crabster.jpg", "lobster.png", "lobster_link.jpg", "trogdor1.png"};
+  std::vector<std::string> actual_order;
+
+  std::transform(library.get_album("my_album").images.begin(),
+                 library.get_album("my_album").images.end(), back_inserter(actual_order), [](const std::shared_ptr<Image> &image)
+                 { return image->get_name(); });
+  ASSERT_EQUAL(expected_order, actual_order);
+}
+
 // To write a test that checks whether an exception is thrown, use the following
 // pattern:
 // TEST(test_exception_thrown) {
