@@ -139,14 +139,8 @@ namespace cs3520
     {
       throw InvalidUserInputException("Image " + file_name + " already exists");
     }
-    // Import the image at the correct position based on filename order
-    auto insert_pos = std::lower_bound(m_images.begin(), m_images.end(), file_name,
-                                       [](const shared_ptr<Image> &image, const string &file_name)
-                                       {
-                                         return image->get_name() < file_name;
-                                       });
 
-    m_images.insert(insert_pos, make_shared<Image>(file_path));
+    m_images.insert(make_shared<Image>(file_path));
   }
 
   shared_ptr<const Image> Library::get_image(const string &name) const
