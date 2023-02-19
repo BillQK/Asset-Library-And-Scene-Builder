@@ -146,7 +146,6 @@ TEST(test_get_name_not_found)
   }
 }
 
-
 TEST(test_remove_image)
 {
   Library library = Library();
@@ -157,7 +156,29 @@ TEST(test_remove_image)
 
   library.remove_image("crabster.jpg");
 
+  std::vector<std::shared_ptr<const cs3520::Image>> list_images = library.list_images();
+
   ASSERT_EQUAL(library.list_images().size(), 3);
+  ASSERT_EQUAL(list_images.at(0)->get_name(), "lobster.png");
+  ASSERT_EQUAL(list_images.at(1)->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(list_images.at(2)->get_name(), "trogdor1.png");
+}
+
+TEST(test_remove_image_failed)
+{
+  try
+  {
+    Library library = Library();
+    library.import_image("imgs/crabster.jpg");
+    library.import_image("imgs/lobster.png");
+    library.import_image("imgs/trogdor1.png");
+    library.import_image("imgs/lobster_link.jpg");
+
+    library.remove_image("crabster.png");
+  } 
+  catch (InvalidUserInputException &e) {
+    ASSERT_EQUAL("Image crabster.png not found"s, e.what());
+  }
 }
 
 // To write a test that checks whether an exception is thrown, use the following

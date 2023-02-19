@@ -49,8 +49,9 @@ namespace
   template <typename Container>
   auto find_image(Container &images, const string &name)
   {
-    auto it = lower_bound(images.begin(), images.end(), name, [](const auto &image, const string &name)
-                          { return image->get_name() < name; });
+    auto it =
+        lower_bound(images.begin(), images.end(), name, [](const auto &image, const string &name)
+                    { return image->get_name() < name; });
 
     if (it == images.end())
     {
@@ -79,25 +80,6 @@ namespace
     return it;
   }
 
-  // Find the album by image name
-  string find_album_by_image_name(const string &image_name, const vector<cs3520::Album> &albums)
-  {
-    auto album_iter = lower_bound(albums.begin(), albums.end(), image_name,
-                                  [](const cs3520::Album &album,
-                                     const string image_name)
-                                  { return any_of(album.images.begin(),
-                                                  album.images.end(),
-                                                  [&image_name](const shared_ptr<cs3520::Image> &image)
-                                                  { return image->get_name() == image_name; }); });
-    if (album_iter != albums.end())
-    {
-      return album_iter->name;
-    }
-    else
-    {
-      throw cs3520::InvalidUserInputException("Image " + image_name + " not found");
-    }
-  }
 }
 
 namespace cs3520
@@ -176,8 +158,16 @@ namespace cs3520
   {
     auto it = find_image(m_images, name);
     m_images.erase(it);
-    string album_contains_image = find_album_by_image_name(name, m_albums);
-    remove_from_album(album_contains_image, name);
+
+    for (auto &album : m_albums)
+    {
+      auto &image = album.images;
+      auto it = find_image(image, name);
+      if (it != image.end())
+      {
+        image.erase(it);
+      }
+    }
   }
 
   void Library::rename_image(const string &current_name, const string &new_name)
