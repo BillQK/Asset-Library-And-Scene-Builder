@@ -139,6 +139,7 @@ TEST(test_get_name_not_found)
     std::shared_ptr<const Image> lobster = library.get_image("lobster.png");
     std::shared_ptr<const Image> trogdor1 = library.get_image("trogdor1.png");
     std::shared_ptr<const Image> lobster_link = library.get_image("lobster_link.png");
+    ASSERT_TRUE(false)
   }
   catch (InvalidUserInputException &e)
   {
@@ -175,6 +176,7 @@ TEST(test_remove_image_failed)
     library.import_image("imgs/lobster_link.jpg");
 
     library.remove_image("crabster.png");
+    ASSERT_TRUE(false)
   }
   catch (InvalidUserInputException &e)
   {
@@ -213,8 +215,128 @@ TEST(test_rename_image_failed_name_exists)
     library.rename_image("crabster.jpg", "lobster.png");
     ASSERT_TRUE(false)
   }
-  catch (InvalidUserInputException &e){
+  catch (InvalidUserInputException &e)
+  {
     ASSERT_EQUAL("Image lobster.png already exists"s, e.what())
+  }
+}
+
+TEST(test_query_images)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  auto images = library.query_images("lobster");
+
+  ASSERT_EQUAL(images.at(0)->get_name(), "lobster.png");
+  ASSERT_EQUAL(images.at(1)->get_name(), "lobster_link.jpg");
+}
+
+TEST(test_query_images_jpg_test)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  auto images = library.query_images("jpg");
+
+  ASSERT_EQUAL(images.at(0)->get_name(), "crabster.jpg");
+  ASSERT_EQUAL(images.at(1)->get_name(), "lobster_link.jpg");
+}
+
+TEST(test_query_images_png_test)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  auto images = library.query_images("png");
+
+  ASSERT_EQUAL(images.at(0)->get_name(), "lobster.png");
+  ASSERT_EQUAL(images.at(1)->get_name(), "trogdor1.png");
+}
+
+TEST(test_query_images_t_test)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  auto images = library.query_images("t");
+
+  ASSERT_EQUAL(images.at(0)->get_name(), "crabster.jpg");
+  ASSERT_EQUAL(images.at(1)->get_name(), "lobster.png");
+  ASSERT_EQUAL(images.at(2)->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(images.at(3)->get_name(), "trogdor1.png");
+}
+
+TEST(test_create_and_get_album)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.create_album("lobster_album");
+  library.create_album("start_with_t");
+  library.create_album("crab");
+
+  ASSERT_EQUAL(library.get_album("lobster_album").name, "lobster_album");
+  ASSERT_EQUAL(library.get_album("start_with_t").name, "start_with_t");
+  ASSERT_EQUAL(library.get_album("crab").name, "crab");
+}
+
+TEST(test_create_album_album_exists)
+{
+  try
+  {
+    Library library = Library();
+    library.import_image("imgs/crabster.jpg");
+    library.import_image("imgs/lobster.png");
+    library.import_image("imgs/trogdor1.png");
+    library.import_image("imgs/lobster_link.jpg");
+
+    library.create_album("lobster_album");
+    library.create_album("crab");
+    library.create_album("lobster_album");
+    ASSERT_TRUE(false)
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Album lobster_album already exists"s, e.what());
+  }
+}
+
+TEST(test_get_album_failed_album_does_not_exists)
+{
+  try
+  {
+    Library library = Library();
+    library.import_image("imgs/crabster.jpg");
+    library.import_image("imgs/lobster.png");
+    library.import_image("imgs/trogdor1.png");
+    library.import_image("imgs/lobster_link.jpg");
+
+    library.create_album("lobster_album");
+    library.create_album("crab");
+    library.create_album("start_with_t");
+
+    library.get_album("crabster");
+    ASSERT_TRUE(false)
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Album crabster not found"s, e.what());
   }
 }
 

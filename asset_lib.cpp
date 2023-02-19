@@ -73,10 +73,11 @@ namespace
                           [](const auto &album, const string &name)
                           { return album.name < name; });
 
-    if (it == albums.end() || it->name == name)
+    if (it == albums.end() || it->name != name)
     {
       throw cs3520::InvalidUserInputException("Album " + name + " not found");
     }
+
     return it;
   }
 
@@ -194,9 +195,6 @@ namespace cs3520
     copy_if(m_images.begin(), m_images.end(), back_inserter(result),
             [&query](const auto &img)
             { return str_contains(img->get_name(), query); });
-
-    sort(result.begin(), result.end(), [](const auto &img1, const auto &img2)
-         { return img1->get_name() < img2->get_name(); });
     return result;
   }
 
@@ -218,16 +216,16 @@ namespace cs3520
 
   void Library::create_album(const std::string &album_name)
   {
-    Album ablum = Album(album_name);
+    auto it = lower_bound(m_albums.begin(), m_albums.end(), album_name,
+                          [](const auto &album, const string &name)
+                          { return album.name < name; });
 
-    auto it = find_album(m_albums, album_name);
-
-    if (it != m_albums.end())
+    if (it != m_albums.end() && it->name == album_name)
     {
       throw InvalidUserInputException("Album " + album_name + " already exists");
     }
 
-    m_albums.push_back(ablum);
+    m_albums.insert(it, Album(album_name));
   }
 
   void Library::delete_album(const std::string &album_name)
