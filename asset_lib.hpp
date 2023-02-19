@@ -222,15 +222,23 @@ namespace cs3520
     // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
     std::vector<Album> m_albums;
-    // struct ImageCompare
-    // {
-    //   using is_transparent = void;
-
-    //   bool operator()(const Image &a, const std::string &name) const;
-
-    //   bool operator()(const Image &a, const std::string &name) const; 
-    // };
-    std::set<std::shared_ptr<Image>> m_images;
+    struct ImageCompare
+    {
+      using is_transparent = void;
+      bool operator()(const std::shared_ptr<Image> &img, const std::string &name) const;
+      // {
+      //   return img->get_name() < name;
+      // }
+      bool operator()(const std::string &name, const std::shared_ptr<Image> &img) const;
+      // {
+      //   return name < img->get_name();
+      // }
+      bool operator()(const std::shared_ptr<Image> &left, const std::shared_ptr<Image> &right) const;
+      // {
+      //   return left->get_name() < right->get_name();
+      // }
+    };
+    std::set<std::shared_ptr<Image>, ImageCompare> m_images;
   };
 
   // Stores metadata (e.g., file path, in-library name) for an image imported

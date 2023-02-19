@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <set>
 #include <iterator>
 #include <algorithm>
 #include <exception>
@@ -67,7 +68,8 @@ namespace
   template <typename Container>
   auto find_album(Container &albums, const string &name)
   {
-    auto it = lower_bound(albums.begin(), albums.end(), name, [](const auto &album, const string &name)
+    auto it = lower_bound(albums.begin(), albums.end(), name,
+                          [](const auto &album, const string &name)
                           { return album.name < name; });
 
     if (it == albums.end())
@@ -80,7 +82,9 @@ namespace
   // Find the album by image name
   string find_album_by_image_name(const string &image_name, const vector<cs3520::Album> &albums)
   {
-    auto album_iter = lower_bound(albums.begin(), albums.end(), image_name, [](const cs3520::Album &album, const string image_name)
+    auto album_iter = lower_bound(albums.begin(), albums.end(), image_name,
+                                  [](const cs3520::Album &album,
+                                     const string image_name)
                                   { return any_of(album.images.begin(),
                                                   album.images.end(),
                                                   [&image_name](const shared_ptr<cs3520::Image> &image)
@@ -98,6 +102,19 @@ namespace
 
 namespace cs3520
 {
+  bool Library::ImageCompare::operator()(const shared_ptr<Image> &img, const std::string &name) const
+  {
+    return img->get_name() < name;
+  }
+  bool Library::ImageCompare::operator()(const std::string &name, const shared_ptr<Image> &img) const
+  {
+    return name < img->get_name();
+  }
+  bool Library::ImageCompare::operator()(const shared_ptr<Image> &left, const shared_ptr<Image> &right) const
+  {
+    return left->get_name() < right->get_name();
+  }
+
   ostream &operator<<(ostream &os, const shared_ptr<const Image> &img_ptr)
   {
     // TASK: Implement this stream insertion operator overload.
@@ -237,8 +254,8 @@ namespace cs3520
       throw InvalidUserInputException("Image " + img_name +
                                       " already part of album " + album_name);
     }
-
-    it->images.push_back(*image_it);
+    shared_ptr<Image> image = *image_it;
+    it->images.push_back(image);
   }
 
   void Library::remove_from_album(const string &album_name, const string &img_name)
