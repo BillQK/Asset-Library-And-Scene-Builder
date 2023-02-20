@@ -6,20 +6,23 @@
 
 #include <string>
 #include <memory>
+#include <set>
 // Add any additional #includes here
 
 #include <SFML/Graphics.hpp>
 
 #include "asset_lib.hpp"
 
-namespace cs3520 {
+namespace cs3520
+{
   class SceneObjectTemplate;
   class SceneObject;
 
   // Maintains a collection of SceneObjects and provides methods
   // for updating objects in the scene and rendering the scene.
   // TASK: Implement the member functions of the Scene class in scene.cpp
-  class Scene {
+  class Scene
+  {
   public:
     // Adds the given object to the scene.
     // SceneObjects should be created with unique IDs not specified by the user.
@@ -49,25 +52,27 @@ namespace cs3520 {
     void set_scene_obj_position(int id, sf::Vector2f position);
 
     // Render the scene to the given window by drawing all objects in the scene.
-    void render(sf::RenderWindow& window) const;
+    void render(sf::RenderWindow &window) const;
 
     // Prints a text represenation of the scene by printing all objects in the scene
     // (using SceneObject::print) to the given stream in order of ID.
     // Each printed scene object should be followed by a newline.
     //
     // Runtime upper bound: O(n), n=number of objects in the scene
-    void print(std::ostream& os) const;
+    void print(std::ostream &os) const;
 
   private:
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Declare any private member variables, private member functions,
     // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
+    std::set<SceneObject> m_scenes;
   };
 
   // Maintains a collection of SceneObjectTemplates.
   // TASK: Implement the member functions of the SceneBuilder class in scene.cpp
-  class SceneBuilder {
+  class SceneBuilder
+  {
   public:
     // Returns a vector containing the names of all the available scene object
     // templates, sorted lexicographically.
@@ -76,7 +81,7 @@ namespace cs3520 {
     std::vector<std::string> get_scene_object_template_names() const;
 
     // Creates a scene object template with the given name and initializes it with
-    // a texture from the given image.  
+    // a texture from the given image.
     //
     // Throws InvalidUserInputException with the message
     // "Scene object template " + name + " already exists"
@@ -85,7 +90,7 @@ namespace cs3520 {
     // Runtime upper bounds:
     // - O(log(n)) to check if a template with that name already exists, n=number of templates
     // - O(n) to add the template
-    void create_scene_obj_template(const std::string& name, const cs3520::Image& img);
+    void create_scene_obj_template(const std::string &name, const cs3520::Image &img);
 
     // Deletes the scene object template with the given name.
     //
@@ -95,7 +100,7 @@ namespace cs3520 {
     // Runtime upper bounds:
     // - O(log(n)) to check if a template with that name already exists, n=number of templates
     // - O(n) to delete the template
-    void delete_scene_obj_template(const std::string& name);
+    void delete_scene_obj_template(const std::string &name);
 
     // Instantiates a SceneObject from this template.
     //
@@ -104,9 +109,8 @@ namespace cs3520 {
     //
     // Runtime upper bound: O(log(n)), n=number of templates
     std::unique_ptr<SceneObject> instantiate_scene_obj(
-      const std::string& scene_object_template_name,
-      int scene_object_id
-    ) const;
+        const std::string &scene_object_template_name,
+        int scene_object_id) const;
 
   private:
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
@@ -118,7 +122,8 @@ namespace cs3520 {
   // SceneObjectTemplate instances are the blueprints from which we can
   // create SceneObjects. SceneObjectTemplates have a user-specified name
   // and a texture loaded from an image from our Library.
-  class SceneObjectTemplate {
+  class SceneObjectTemplate
+  {
   public:
     // TASK: Implement two constructors. One should take in only a name as a string, and
     // the other should take in a name as a string followed by the cs3520::Image
@@ -128,9 +133,9 @@ namespace cs3520 {
 
     // TASK: Implement get_name, get_texture, and set_texture
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
-    const std::string& get_name();
-    const sf::Texture& get_texture() const;
-    void set_texture(const cs3520::Image& img);
+    const std::string &get_name();
+    const sf::Texture &get_texture() const;
+    void set_texture(const cs3520::Image &img);
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
 
   private:
@@ -147,7 +152,8 @@ namespace cs3520 {
   // were instatiated gets deleted.
   //
   // TASK: Implement the member functions of SceneObject.
-  class SceneObject {
+  class SceneObject
+  {
   public:
     // Constructs a SceneObject from the given template.
     // It is up to you to decide whether to put the implementation of
@@ -158,9 +164,9 @@ namespace cs3520 {
     int get_id() const { return m_id; }
 
     // Gets the position of this scene object.
-    const sf::Vector2f& get_position() const;
+    const sf::Vector2f &get_position() const;
     // Sets the position of this scene object.
-    void set_position(const sf::Vector2f& pos);
+    void set_position(const sf::Vector2f &pos);
 
     // Renders a sprite to the given window.
     // The sprite's texture is specified by the scene object template
@@ -170,7 +176,7 @@ namespace cs3520 {
     // If the SceneObjectTemplate from which this object was created no longer
     // exists, print the message "Template " + m_template_name + " was deleted\n"
     // to cerr instead of drawing this object.
-    void draw(sf::RenderWindow& window) const;
+    void draw(sf::RenderWindow &window) const;
 
     // Prints a text representation of this object to the given stream.
     // The text should follow this format (text in angle brackets should be replaced
@@ -185,7 +191,7 @@ namespace cs3520 {
     // " (template <scene object template name> was deleted)"
     // to the given stream. Note the single space between the two messages.
     // Does not print a trailing newline in this situation either.
-    void print(std::ostream& os) const;
+    void print(std::ostream &os) const;
 
   private:
     int m_id;
