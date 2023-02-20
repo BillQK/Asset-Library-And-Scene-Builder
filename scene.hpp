@@ -76,7 +76,7 @@ namespace cs3520 {
     std::vector<std::string> get_scene_object_template_names() const;
 
     // Creates a scene object template with the given name and initializes it with
-    // a texture from the given image.
+    // a texture from the given image.  
     //
     // Throws InvalidUserInputException with the message
     // "Scene object template " + name + " already exists"

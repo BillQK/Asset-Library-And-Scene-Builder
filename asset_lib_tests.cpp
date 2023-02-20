@@ -512,7 +512,7 @@ TEST(test_remove_from_album)
 
   try
   {
-    library.get_album("non_existent_album");
+    library.remove_from_album("non_existent_album", "trogdor1.png");
     ASSERT_TRUE(false);
   }
   catch (InvalidUserInputException &e)
@@ -527,7 +527,7 @@ TEST(test_remove_from_album)
   }
   catch (InvalidUserInputException &e)
   {
-    ASSERT_EQUAL("Image non_existent_image not found"s, e.what());
+    ASSERT_EQUAL("Image non_existent_image not part of album lobster_album"s, e.what());
   }
 }
 TEST(test_sort_album)
