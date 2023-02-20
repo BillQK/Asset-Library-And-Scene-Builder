@@ -189,7 +189,7 @@ namespace cs3520
     //   s=number of images in the requested album
     // - O(1) (amortized) to add the image to the album.
     void add_to_album(const std::string &album_name, const std::string &img_name);
-
+    
     // Removes the specified image from the specified album.
     //
     // Throws InvalidUserInputException with the message "Album " + name + " not found"
@@ -271,7 +271,7 @@ namespace cs3520
 
     std::ostream &print(std::ostream &os) const
     {
-      os << get_name() << " (" << m_path << ")";
+      os << std::make_shared<const Image>(*this);
       return os;
     }
 

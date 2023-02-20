@@ -85,15 +85,18 @@ namespace
 
 namespace cs3520
 {
-  bool Library::ImageCompare::operator()(const shared_ptr<Image> &img, const std::string &name) const
+  bool Library::ImageCompare::operator()(const shared_ptr<Image> &img,
+                                         const std::string &name) const
   {
     return img->get_name() < name;
   }
-  bool Library::ImageCompare::operator()(const std::string &name, const shared_ptr<Image> &img) const
+  bool Library::ImageCompare::operator()(const std::string &name,
+                                         const shared_ptr<Image> &img) const
   {
     return name < img->get_name();
   }
-  bool Library::ImageCompare::operator()(const shared_ptr<Image> &left, const shared_ptr<Image> &right) const
+  bool Library::ImageCompare::operator()(const shared_ptr<Image> &left,
+                                         const shared_ptr<Image> &right) const
   {
     return left->get_name() < right->get_name();
   }
@@ -101,7 +104,7 @@ namespace cs3520
   ostream &operator<<(ostream &os, const shared_ptr<const Image> &img_ptr)
   {
     // TASK: Implement this stream insertion operator overload.
-    os << "Image(" << img_ptr->get_name() << ", " << img_ptr->get_path() << ")";
+    os << img_ptr->get_name() << " (" << img_ptr->get_path() << ")";
     return os;
   }
 
@@ -134,7 +137,8 @@ namespace cs3520
     string file_name = filesystem::path(file_path).filename().string();
 
     // Check if the name is already in use
-    auto new_it = lower_bound(m_images.begin(), m_images.end(), file_name, [](const auto &image, const string &name)
+    auto new_it = lower_bound(m_images.begin(), m_images.end(), file_name,
+                              [](const auto &image, const string &name)
                               { return image->get_name() < name; });
     if (new_it != m_images.end() && (*new_it)->get_name() == file_name)
     {
@@ -168,20 +172,22 @@ namespace cs3520
 
   void Library::rename_image(const string &current_name, const string &new_name)
   {
+    // Find the image to be renamed
     auto it = find_image(m_images, current_name);
     shared_ptr<Image> image = *it;
 
     // Check if the specified new name is already in use
-
-    auto new_it = lower_bound(m_images.begin(), m_images.end(), new_name, [](const auto &image, const string &name)
+    auto new_it = lower_bound(m_images.begin(), m_images.end(), new_name,
+                              [](const auto &image, const string &name)
                               { return image->get_name() < name; });
 
     if (new_it != m_images.end() && (*new_it)->get_name() == new_name)
     {
       throw InvalidUserInputException("Image " + new_name + " already exists");
     }
-
+    m_images.erase(it);
     image->rename(new_name);
+    m_images.insert(image);
   }
 
   vector<shared_ptr<const Image>> Library::query_images(const string &query) const
@@ -226,31 +232,39 @@ namespace cs3520
   void Library::delete_album(const std::string &album_name)
   {
     auto it = find_album(m_albums, album_name);
+
+    // Clear the vector of images in the album, which will remove the
+    // pointers to the images from the album, but won't delete the images
+    // themselves.
+    it->images.clear();
     m_albums.erase(it);
+    
   }
 
   void Library::add_to_album(const std::string &album_name, const std::string &img_name)
   {
     auto it = find_album(m_albums, album_name);
     auto image_it = find_image(m_images, img_name);
+    shared_ptr<Image> image = *image_it;
     auto album_it = it->images;
 
     // check if image already exists in album list
-    auto image_check_in_album = lower_bound(album_it.begin(), album_it.end(), img_name, [](const auto &image, const string &name)
+    auto image_check_in_album = lower_bound(album_it.begin(), album_it.end(), img_name,
+                                            [](const auto &image, const string &name)
                                             { return image->get_name() < name; });
     if (image_check_in_album != album_it.end() && (*image_check_in_album)->get_name() == img_name)
     {
       throw InvalidUserInputException("Image " + img_name +
                                       " already part of album " + album_name);
     }
-    shared_ptr<Image> image = *image_it;
     it->images.push_back(image);
   }
 
   void Library::remove_from_album(const string &album_name, const string &img_name)
   {
     auto it = find_album(m_albums, album_name);
-    auto image_it = lower_bound(it->images.begin(), it->images.end(), img_name, [](const auto &image, const string &name)
+    auto image_it = lower_bound(it->images.begin(), it->images.end(), img_name,
+                                [](const auto &image, const string &name)
                                 { return image->get_name() < name; });
     if (image_it == it->images.end() || (*image_it)->get_name() != img_name)
     {

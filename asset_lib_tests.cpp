@@ -32,6 +32,13 @@ TEST(test_image_constructor_with_path)
 
   ASSERT_EQUAL(expected.str(), actual.str());
 }
+TEST(test_print)
+{
+  std::shared_ptr<cs3520::Image> image = std::make_shared<cs3520::Image>("/path/to/image.jpg");
+  std::stringstream ss;
+  image->print(ss);
+  ASSERT_EQUAL(ss.str(), "image.jpg (\"/path/to/image.jpg\")");
+}
 
 // ----------------------------------------------------------------
 // Library Test Cases
@@ -202,6 +209,70 @@ TEST(test_rename_image)
   ASSERT_EQUAL(list_images.at(3)->get_name(), "trogdor1.png");
 }
 
+TEST(test_rename_image_library_state_after_rename_image)
+{
+  // Create a new library and import some images
+  Library library;
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  // Rename an image in the library
+  library.rename_image("crabster.jpg", "bestcrabster.jpg");
+
+  // Ensure that the library now contains the renamed image
+  std::vector<std::shared_ptr<const cs3520::Image>> images = library.list_images();
+  ASSERT_EQUAL(images.size(), 4);
+  ASSERT_EQUAL(images[0]->get_name(), "bestcrabster.jpg");
+  ASSERT_EQUAL(images[1]->get_name(), "lobster.png");
+  ASSERT_EQUAL(images[2]->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(images[3]->get_name(), "trogdor1.png");
+
+  // Import a new image with the original name of the renamed image
+  library.import_image("imgs/crabster.jpg");
+
+  // Ensure that the library now contains both the renamed and new images,
+  // and that they are sorted alphabetically by name
+  images = library.list_images();
+  ASSERT_EQUAL(images.size(), 5);
+  ASSERT_EQUAL(images[0]->get_name(), "bestcrabster.jpg");
+  ASSERT_EQUAL(images[1]->get_name(), "crabster.jpg");
+  ASSERT_EQUAL(images[2]->get_name(), "lobster.png");
+  ASSERT_EQUAL(images[3]->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(images[4]->get_name(), "trogdor1.png");
+
+  // Change trogdor1.png to abester.png
+  library.rename_image("trogdor1.png", "abester.png");
+
+  images = library.list_images();
+  // Ensure that the library now contains both the renamed and new images,
+  // and that they are sorted alphabetically by name
+  ASSERT_EQUAL(images.size(), 5);
+  ASSERT_EQUAL(images[0]->get_name(), "abester.png");
+  ASSERT_EQUAL(images[1]->get_name(), "bestcrabster.jpg");
+  ASSERT_EQUAL(images[2]->get_name(), "crabster.jpg");
+  ASSERT_EQUAL(images[3]->get_name(), "lobster.png");
+  ASSERT_EQUAL(images[4]->get_name(), "lobster_link.jpg");
+
+  // Ensure that the rename operation doesn't change the path of the images
+  ASSERT_EQUAL(images[0]->get_path(), "imgs/trogdor1.png");
+
+  // Testing rename operation with albums
+  library.create_album("crabster");
+  library.add_to_album("crabster", "bestcrabster.jpg");
+
+  Album album = library.get_album("crabster");
+
+  ASSERT_EQUAL(album.images.at(0)->get_name(), "bestcrabster.jpg");
+
+  // Testing rename operation with albums
+  library.rename_image("bestcrabster.jpg", "worstcrabster.jpg");
+
+  library.get_album("crabster");
+  ASSERT_EQUAL(album.images.at(0)->get_name(), "worstcrabster.jpg");
+}
+
 TEST(test_rename_image_failed_name_exists)
 {
   try
@@ -294,6 +365,21 @@ TEST(test_create_and_get_album)
   ASSERT_EQUAL(library.get_album("lobster_album").name, "lobster_album");
   ASSERT_EQUAL(library.get_album("start_with_t").name, "start_with_t");
   ASSERT_EQUAL(library.get_album("crab").name, "crab");
+}
+
+TEST(test_create_album_sorted)
+{
+  Library library = Library();
+
+  // Add albums to library
+  library.create_album("Zoo");
+  library.create_album("Botanical Garden");
+  library.create_album("Amusement Park");
+
+  std::vector<std::string> names = std::vector<std::string>{"Amusement Park", "Botanical Garden", "Zoo"};
+
+  // Check that albums are sorted alphabetically
+  ASSERT_EQUAL(library.get_album_names(), names);
 }
 
 TEST(test_create_album_album_exists)
@@ -495,6 +581,63 @@ TEST(test_add_to_album)
   }
 }
 
+TEST(test_album_image_order)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.create_album("lobster_album");
+
+  // Add images to album
+  library.add_to_album("lobster_album", "lobster.png");
+  library.add_to_album("lobster_album", "trogdor1.png");
+  library.add_to_album("lobster_album", "lobster_link.jpg");
+  library.add_to_album("lobster_album", "crabster.jpg");
+
+  // Verify images in album are in order they were added
+  auto album_images = library.get_album("lobster_album").images;
+  ASSERT_EQUAL(album_images.size(), 4);
+  ASSERT_EQUAL(album_images[0]->get_name(), "lobster.png");
+  ASSERT_EQUAL(album_images[1]->get_name(), "trogdor1.png");
+  ASSERT_EQUAL(album_images[2]->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(album_images[3]->get_name(), "crabster.jpg");
+
+  // Sort album and verify images are sorted
+  library.sort_album("lobster_album");
+  album_images = library.get_album("lobster_album").images;
+  ASSERT_EQUAL(album_images.size(), 4);
+  ASSERT_EQUAL(album_images[0]->get_name(), "crabster.jpg");
+  ASSERT_EQUAL(album_images[1]->get_name(), "lobster.png");
+  ASSERT_EQUAL(album_images[2]->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(album_images[3]->get_name(), "trogdor1.png");
+}
+
+TEST(test_add_to_album_many_albums_to_one_image)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.create_album("lobster_album");
+  library.create_album("start_with_t");
+
+  library.add_to_album("lobster_album", "lobster.png");
+  library.add_to_album("start_with_t", "lobster.png");
+
+  auto album1 = library.get_album("lobster_album");
+  auto album2 = library.get_album("start_with_t");
+
+  ASSERT_EQUAL(album1.images.size(), 1);
+  ASSERT_EQUAL(album1.images.at(0)->get_name(), "lobster.png");
+  ASSERT_EQUAL(album2.images.size(), 1);
+  ASSERT_EQUAL(album2.images.at(0)->get_name(), "lobster.png");
+}
+
 TEST(test_remove_from_album)
 {
   Library library = Library();
@@ -530,6 +673,26 @@ TEST(test_remove_from_album)
     ASSERT_EQUAL("Image non_existent_image not part of album lobster_album"s, e.what());
   }
 }
+
+TEST(TestDeleteAlbum)
+{
+  Library library = Library();
+  library.create_album("Album C");
+  library.create_album("Album A");
+  library.create_album("Album D");
+  library.create_album("Album B");
+
+  ASSERT_EQUAL(library.get_album_names().size(), 4);
+
+  library.delete_album("Album B");
+  auto albums = library.get_album_names();
+
+  ASSERT_EQUAL(albums.size(), 3);
+  ASSERT_EQUAL(albums.at(0), "Album A");
+  ASSERT_EQUAL(albums.at(1), "Album C");
+  ASSERT_EQUAL(albums.at(2), "Album D");
+}
+
 TEST(test_sort_album)
 {
   // create library instance and import some images
@@ -557,6 +720,44 @@ TEST(test_sort_album)
                  library.get_album("my_album").images.end(), back_inserter(actual_order), [](const std::shared_ptr<Image> &image)
                  { return image->get_name(); });
   ASSERT_EQUAL(expected_order, actual_order);
+}
+
+TEST(test_album_sort)
+{
+  Library lib;
+
+  // Add some albums to the library
+  lib.create_album("Album C");
+  lib.create_album("Album A");
+  lib.create_album("Album B");
+
+  // Get the album names
+  std::vector<std::string> albums_names = lib.get_album_names();
+
+  // Ensure that albums are sorted correctly
+  ASSERT_EQUAL(albums_names.at(0), "Album A");
+  ASSERT_EQUAL(albums_names.at(1), "Album B");
+  ASSERT_EQUAL(albums_names.at(2), "Album C");
+
+  // Add a new album
+  lib.create_album("Album D");
+
+  std::vector<std::string> albums_names_new = lib.get_album_names();
+
+  // Ensure that the new album is inserted in the correct position
+  ASSERT_EQUAL(albums_names_new.at(0), "Album A");
+  ASSERT_EQUAL(albums_names_new.at(1), "Album B");
+  ASSERT_EQUAL(albums_names_new.at(2), "Album C");
+  ASSERT_EQUAL(albums_names_new.at(3), "Album D");
+
+  lib.delete_album("Album A");
+
+  std::vector<std::string> deleted_album = lib.get_album_names();
+
+  // Ensure that the new album is inserted in the correct position
+  ASSERT_EQUAL(deleted_album.at(0), "Album B");
+  ASSERT_EQUAL(deleted_album.at(1), "Album C");
+  ASSERT_EQUAL(deleted_album.at(2), "Album D");
 }
 
 // To write a test that checks whether an exception is thrown, use the following
