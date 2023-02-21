@@ -75,6 +75,7 @@ namespace cs3520
     // };
 
     std::set<std::unique_ptr<SceneObject>> m_scene_objects;
+    int counterId = 0;
   };
 
   // Maintains a collection of SceneObjectTemplates.
@@ -220,6 +221,7 @@ namespace cs3520
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Add any private member variables you need here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
+    std::shared_ptr<SceneObjectTemplate> m_tmpl; 
   };
 }
 

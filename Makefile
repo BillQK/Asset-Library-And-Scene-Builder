@@ -19,7 +19,7 @@ test: asset_lib_tests.exe scene_tests.exe main.exe
 asset_lib_tests.exe: asset_lib.cpp asset_lib_tests.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-scene_tests.exe: scene.cpp scene_tests.cpp
+scene_tests.exe: scene.cpp asset_lib.cpp scene_tests.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(sfml_flags)
 
 main.exe: asset_lib.cpp scene.cpp main.cpp

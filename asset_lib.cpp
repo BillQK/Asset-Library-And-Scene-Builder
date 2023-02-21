@@ -50,9 +50,11 @@ namespace
   auto find_image(Container &images, const string &name)
   {
     auto it =
-        lower_bound(images.begin(), images.end(), name,
-                    [](const auto &image, const string &name)
-                    { return image->get_name() < name; });
+        // lower_bound(images.begin(), images.end(), name,
+        //             [](const auto &image, const string &name)
+        //             { return image->get_name() < name; });
+        find_if(images.begin(), images.end(), [&name](const auto &image)
+                { return image->get_name() == name; });
 
     if (it == images.end() || (*it)->get_name() != name)
     {

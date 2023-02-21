@@ -35,7 +35,6 @@ namespace cs3520
   // TASK: Implement the Scene member functions.
   void Scene::add_scene_obj(unique_ptr<SceneObject> scene_obj)
   {
-
     m_scene_objects.insert(move(scene_obj));
   }
   // void Scene::remove_scene_obj(int id)
@@ -52,10 +51,14 @@ namespace cs3520
   // {
   //   // Ask TA
   // }
-  // void print(std::ostream &os) const
-  // {
-  //   os << "hi";
-  // }
+  void Scene::print(std::ostream &os) const
+  {
+    for_each(m_scene_objects.begin(), m_scene_objects.end(),
+             [&os](const unique_ptr<SceneObject>& scene_obj)
+             {
+               scene_obj->print(os);
+             });
+  }
 
   // --------------------------------------------------------------------------------------------
 
@@ -83,6 +86,23 @@ namespace cs3520
     scene_texture = tmpl->get_texture();
     sf::Sprite scene_sprite(scene_texture);
     m_sprite = scene_sprite;
+    m_tmpl = tmpl;
+  }
+  const sf::Vector2f &SceneObject::get_position() const
+  {
+    return m_sprite.getPosition();
+  }
+  void SceneObject::set_position(const sf::Vector2f &pos)
+  {
+    m_sprite.setPosition(pos);
+  }
+  void SceneObject::print(ostream &os) const
+  {
+    os << m_tmpl->get_name() << " object "
+       << to_string(m_id) << " at position "
+       << to_string(int(m_sprite.getPosition().x))
+       << ", " << to_string(int(m_sprite.getPosition().y))
+       << endl;
   }
 
 }
