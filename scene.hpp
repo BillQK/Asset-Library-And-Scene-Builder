@@ -66,7 +66,15 @@ namespace cs3520
     // Declare any private member variables, private member functions,
     // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-    std::set<SceneObject> m_scenes;
+    // struct SceneObjectComparator
+    // {
+    //   bool operator()(const std::unique_ptr<SceneObject> &lhs, const std::unique_ptr<SceneObject> &rhs) const
+    //   {
+    //     return lhs->get_id() < rhs->get_id();
+    //   }
+    // };
+
+    std::set<std::unique_ptr<SceneObject>> m_scene_objects;
   };
 
   // Maintains a collection of SceneObjectTemplates.
@@ -117,6 +125,7 @@ namespace cs3520
     // Declare any private member variables, private member functions,
     // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
+    std::map<std::string, SceneObjectTemplate> m_templates;
   };
 
   // SceneObjectTemplate instances are the blueprints from which we can
@@ -130,12 +139,24 @@ namespace cs3520
     // to initialize the template's texture from.
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-
+    SceneObjectTemplate(const std::string &name);
+    SceneObjectTemplate(const std::string &name, const cs3520::Image image);
     // TASK: Implement get_name, get_texture, and set_texture
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
-    const std::string &get_name();
-    const sf::Texture &get_texture() const;
-    void set_texture(const cs3520::Image &img);
+    const std::string &get_name()
+    {
+      return m_name;
+    }
+    const sf::Texture &get_texture() const
+    {
+      return m_texture;
+    }
+    void set_texture(const cs3520::Image &img)
+    {
+      sf::Texture m;
+      m.loadFromFile(img.get_path());
+      m_texture = m;
+    }
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
 
   private:

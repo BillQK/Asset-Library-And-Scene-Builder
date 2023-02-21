@@ -50,7 +50,8 @@ namespace
   auto find_image(Container &images, const string &name)
   {
     auto it =
-        lower_bound(images.begin(), images.end(), name, [](const auto &image, const string &name)
+        lower_bound(images.begin(), images.end(), name,
+                    [](const auto &image, const string &name)
                     { return image->get_name() < name; });
 
     if (it == images.end() || (*it)->get_name() != name)
@@ -238,7 +239,6 @@ namespace cs3520
     // themselves.
     it->images.clear();
     m_albums.erase(it);
-    
   }
 
   void Library::add_to_album(const std::string &album_name, const std::string &img_name)
@@ -252,7 +252,8 @@ namespace cs3520
     auto image_check_in_album = lower_bound(album_it.begin(), album_it.end(), img_name,
                                             [](const auto &image, const string &name)
                                             { return image->get_name() < name; });
-    if (image_check_in_album != album_it.end() && (*image_check_in_album)->get_name() == img_name)
+    if (image_check_in_album != album_it.end() &&
+        (*image_check_in_album)->get_name() == img_name)
     {
       throw InvalidUserInputException("Image " + img_name +
                                       " already part of album " + album_name);
