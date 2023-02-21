@@ -638,6 +638,73 @@ TEST(test_add_to_album_many_albums_to_one_image)
   ASSERT_EQUAL(album2.images.at(0)->get_name(), "lobster.png");
 }
 
+// test
+TEST(test_add_to_album_lower_bound_does_not_work)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.create_album("lobster_album");
+  library.create_album("start_with_t");
+
+  library.add_to_album("lobster_album", "crabster.jpg");
+  library.add_to_album("lobster_album", "lobster_link.jpg");
+  library.add_to_album("lobster_album", "lobster.png");
+  library.add_to_album("start_with_t", "lobster.png");
+
+  auto album1 = library.get_album("lobster_album");
+
+  ASSERT_EQUAL(album1.images.at(2)->get_name(), "lobster.png");
+  ASSERT_EQUAL(album1.images.at(1)->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(album1.images.at(0)->get_name(), "crabster.jpg");
+
+  try
+  {
+    library.add_to_album("lobster_album", "lobster.png");
+    ASSERT_TRUE(false);
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_EQUAL("Image lobster.png already part of album lobster_album"s, e.what());
+  }
+}
+
+TEST(test_remove_from_album_lower_bound_does_not_work)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.create_album("lobster_album");
+  library.create_album("start_with_t");
+
+  library.add_to_album("lobster_album", "lobster_link.jpg");
+  library.add_to_album("lobster_album", "lobster.png");
+  library.add_to_album("lobster_album", "crabster.jpg");
+  library.add_to_album("start_with_t", "lobster.png");
+
+  auto album1 = library.get_album("lobster_album");
+
+  ASSERT_EQUAL(album1.images.at(1)->get_name(), "lobster.png");
+  ASSERT_EQUAL(album1.images.at(0)->get_name(), "lobster_link.jpg");
+  ASSERT_EQUAL(album1.images.at(2)->get_name(), "crabster.jpg");
+
+  try
+  {
+    library.remove_from_album("lobster_album", "lobster.png");
+    ASSERT_TRUE(true);
+  }
+  catch (InvalidUserInputException &e)
+  {
+    ASSERT_TRUE(false);
+  }
+}
+
 TEST(test_remove_from_album)
 {
   Library library = Library();

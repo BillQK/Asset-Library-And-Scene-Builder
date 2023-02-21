@@ -41,4 +41,24 @@ TEST(test_add_scene_obj)
   ASSERT_EQUAL(actual.str(), expected.str());
 }
 
+TEST(test_remove_scene_obj)
+{
+  Scene scene;
+  shared_ptr<SceneObjectTemplate> sceneObjectTemplate =
+      make_shared<SceneObjectTemplate>("crab", Image("imgs/crabster.jpg"));
+  unique_ptr<SceneObject> sceneObject =
+      make_unique<SceneObject>(1, sceneObjectTemplate);
+
+  scene.add_scene_obj(move(sceneObject));
+  scene.remove_scene_obj(1);
+
+  stringstream actual;
+  stringstream expected;
+
+  actual << "";
+  scene.print(actual);
+
+  ASSERT_EQUAL(actual.str(), expected.str());
+}
+
 TEST_MAIN()

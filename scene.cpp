@@ -37,16 +37,16 @@ namespace cs3520
   {
     m_scene_objects.insert(move(scene_obj));
   }
-  // void Scene::remove_scene_obj(int id)
-  // {
-  //   auto it = find_scene_objects(m_scene_objects, id);
-  //   m_scene_objects.erase(it);
-  // }
-  // void Scene::set_scene_obj_position(int id, sf::Vector2f position)
-  // {
-  //   auto it = find_scene_objects(m_scene_objects, id);
-  //   (*it)->set_position(position);
-  // }
+  void Scene::remove_scene_obj(int id)
+  {
+    auto it = find_scene_objects(m_scene_objects, id);
+    m_scene_objects.erase(it);
+  }
+  void Scene::set_scene_obj_position(int id, sf::Vector2f position)
+  {
+    auto it = find_scene_objects(m_scene_objects, id);
+    (*it)->set_position(position);
+  }
   // void Scene::render(sf::RenderWindow &window) const
   // {
   //   // Ask TA
@@ -54,7 +54,7 @@ namespace cs3520
   void Scene::print(std::ostream &os) const
   {
     for_each(m_scene_objects.begin(), m_scene_objects.end(),
-             [&os](const unique_ptr<SceneObject>& scene_obj)
+             [&os](const unique_ptr<SceneObject> &scene_obj)
              {
                scene_obj->print(os);
              });
@@ -80,6 +80,7 @@ namespace cs3520
   // --------------------------------------------------------------------------------------------
 
   // TASK: Implement the SceneObject member functions.
+  // Constructs a SceneObject
   SceneObject::SceneObject(int id, shared_ptr<SceneObjectTemplate> tmpl) : m_id(id)
   {
     sf::Texture scene_texture;
@@ -88,14 +89,25 @@ namespace cs3520
     m_sprite = scene_sprite;
     m_tmpl = tmpl;
   }
+
   const sf::Vector2f &SceneObject::get_position() const
   {
     return m_sprite.getPosition();
   }
+
   void SceneObject::set_position(const sf::Vector2f &pos)
   {
     m_sprite.setPosition(pos);
   }
+
+  void SceneObject::draw(sf::RenderWindow &window) const {
+    window.draw(m_sprite);
+    window.display();
+    if(m_tmpl) {
+      cerr << "Template " + m_tmpl->get_name() << " was deleted" << endl;
+    }
+  }
+
   void SceneObject::print(ostream &os) const
   {
     os << m_tmpl->get_name() << " object "
@@ -104,5 +116,6 @@ namespace cs3520
        << ", " << to_string(int(m_sprite.getPosition().y))
        << endl;
   }
+
 
 }

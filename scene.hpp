@@ -75,7 +75,7 @@ namespace cs3520
     // };
 
     std::set<std::unique_ptr<SceneObject>> m_scene_objects;
-    int counterId = 0;
+    
   };
 
   // Maintains a collection of SceneObjectTemplates.
