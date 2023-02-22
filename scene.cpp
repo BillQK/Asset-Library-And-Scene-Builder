@@ -37,26 +37,33 @@ namespace cs3520
   {
     m_scene_objects.insert(move(scene_obj));
   }
+
   void Scene::remove_scene_obj(int id)
   {
     auto it = find_scene_objects(m_scene_objects, id);
     m_scene_objects.erase(it);
   }
+
   void Scene::set_scene_obj_position(int id, sf::Vector2f position)
   {
     auto it = find_scene_objects(m_scene_objects, id);
     (*it)->set_position(position);
   }
-  // void Scene::render(sf::RenderWindow &window) const
-  // {
-  //   // Ask TA
-  // }
+
   void Scene::print(std::ostream &os) const
   {
     for_each(m_scene_objects.begin(), m_scene_objects.end(),
              [&os](const unique_ptr<SceneObject> &scene_obj)
              {
                scene_obj->print(os);
+             });
+  }
+  void Scene::render(sf::RenderWindow &window) const
+  {
+    for_each(m_scene_objects.begin(), m_scene_objects.end(),
+             [&window](const unique_ptr<SceneObject> &scene_obj)
+             {
+               scene_obj->draw(window);
              });
   }
 
@@ -100,10 +107,12 @@ namespace cs3520
     m_sprite.setPosition(pos);
   }
 
-  void SceneObject::draw(sf::RenderWindow &window) const {
+  void SceneObject::draw(sf::RenderWindow &window) const
+  {
     window.draw(m_sprite);
     window.display();
-    if(m_tmpl) {
+    if (m_tmpl)
+    {
       cerr << "Template " + m_tmpl->get_name() << " was deleted" << endl;
     }
   }
@@ -116,6 +125,5 @@ namespace cs3520
        << ", " << to_string(int(m_sprite.getPosition().y))
        << endl;
   }
-
 
 }

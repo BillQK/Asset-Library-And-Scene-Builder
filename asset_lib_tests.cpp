@@ -350,6 +350,20 @@ TEST(test_query_images_t_test)
   ASSERT_EQUAL(images.at(3)->get_name(), "trogdor1.png");
 }
 
+TEST(test_query_images_empty_string)
+{
+  Library library = Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+  
+  // Query all images
+  auto images = library.query_images("");
+
+  ASSERT_EQUAL(images.size(), 4);
+}
+
 TEST(test_create_and_get_album)
 {
   Library library = Library();
