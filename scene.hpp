@@ -146,11 +146,11 @@ namespace cs3520
     SceneObjectTemplate(const std::string &name, const cs3520::Image image);
     // TASK: Implement get_name, get_texture, and set_texture
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
-    const sf::Texture &SceneObjectTemplate::get_texture() const
+    const sf::Texture &get_texture() const
     {
       return m_texture;
     }
-    const std::string &SceneObjectTemplate::get_name()
+    const std::string &get_name()
     {
       return m_name;
     }

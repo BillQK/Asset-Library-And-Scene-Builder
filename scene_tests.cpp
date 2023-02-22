@@ -3,6 +3,7 @@
 #include "unit_test_framework.h"
 #include "scene.hpp"
 #include "exceptions.hpp"
+#include "asset_lib.hpp"
 
 // Add your Scene, SceneBuilder, SceneObjectTemplate, and SceneObject unit tests
 // to this file.

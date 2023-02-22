@@ -111,6 +111,7 @@
 using cs3520::Library;
 using cs3520::Scene;
 using cs3520::SceneBuilder;
+using cs3520::Image;
 using std::cin;
 using std::cout;
 using std::endl;
