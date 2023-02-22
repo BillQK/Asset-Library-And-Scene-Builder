@@ -148,6 +148,12 @@ namespace cs3520
     m_texture = m;
   }
 
+  void SceneObjectTemplate::set_texture(const cs3520::Image &img)
+  {
+    sf::Texture m;
+    m.loadFromFile(img.get_path());
+    m_texture = m;
+  }
   // --------------------------------------------------------------------------------------------
 
   // TASK: Implement the SceneObject member functions.
