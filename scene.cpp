@@ -121,8 +121,8 @@ namespace cs3520
   {
     os << m_tmpl->get_name() << " object "
        << to_string(m_id) << " at position "
-       << to_string(int(m_sprite.getPosition().x))
-       << ", " << to_string(int(m_sprite.getPosition().y))
+       << to_string(int(round(m_sprite.getPosition().x)))
+       << ", " << to_string(int(round(m_sprite.getPosition().y)))
        << endl;
   }
 

@@ -268,7 +268,7 @@ namespace cs3520
     auto image_it =
         find_if(it->images.begin(), it->images.end(), [&img_name](const auto &image)
                 { return image->get_name() == img_name; });
-    if (image_it == it->images.end() || (*image_it)->get_name() != img_name)
+    if (image_it == it->images.end())
     {
       throw InvalidUserInputException("Image " + img_name + " not part of album " + album_name);
     }

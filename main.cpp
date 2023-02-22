@@ -108,18 +108,19 @@
 #include "scene.hpp"
 #include "exceptions.hpp"
 
+using cs3520::Library;
+using cs3520::Scene;
+using cs3520::SceneBuilder;
 using std::cin;
+using std::cout;
+using std::endl;
 using std::istringstream;
 using std::map;
 using std::string;
-using std::cout;
-using std::endl;
-using cs3520::Library;
-using cs3520::SceneBuilder;
-using cs3520::Scene;
 // Add other "using" statements here
 
-namespace {
+namespace
+{
   // Declare any helper functions you need here, if any.
   // NOTE: The command function declarations should go in the next
   // unnamed namespace.
@@ -127,7 +128,8 @@ namespace {
 
 }
 
-namespace {
+namespace
+{
   // Declare your command functions here. Define them in the unnamed namespace
   // below main().
   // If a command function doesn't modify the Library, SceneBuilder, and/or Scene,
@@ -137,9 +139,9 @@ namespace {
   // The first two stubs are provided for you to illustrate this.
 
   // Library is const, SceneBuilder and Scene are unused.
-  void list_imgs(istringstream& iss, const Library& lib, const SceneBuilder&, const Scene&);
+  void list_imgs(istringstream &iss, const Library &lib, const SceneBuilder &, const Scene &);
   // Library is non-const, SceneBuilder and Scene are unused.
-  void import_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void import_img(istringstream &iss, Library &lib, const SceneBuilder &, const Scene &);
 }
 
 // This is a map of strings to functions. By declaring the type of the functions
@@ -156,35 +158,36 @@ namespace {
 // Note: Do NOT write a function to implement the "quit" command.
 // Instead, check for "quit" in the command loop in main.
 const map<
-  string, std::function<void (istringstream&, Library&, SceneBuilder&, Scene&)>
-> command_funcs = {
-  // Add your command functions to this map.
-  // Wrap the name of each function in std::function, as this will allow us to
-  // use the proper const modifiers on the function parameters.
+    string, std::function<void(istringstream &, Library &, SceneBuilder &, Scene &)>>
+    command_funcs = {
+        // Add your command functions to this map.
+        // Wrap the name of each function in std::function, as this will allow us to
+        // use the proper const modifiers on the function parameters.
 
-  {"list_imgs", list_imgs},
-  {"import_img", import_img},
-  // {"remove_img", },
-  // {"rename_img", },
-  // {"query_imgs", },
-  // {"list_albums", },
-  // {"print_album", },
-  // {"create_album", },
-  // {"delete_album", },
-  // {"add_to_album", },
-  // {"remove_from_album", },
-  // {"sort_album", },
-  // {"list_scene_obj_tmpls", },
-  // {"create_scene_obj_tmpl", },
-  // {"remove_scene_obj_tmpl", },
-  // {"spawn_scene_obj", },
-  // {"set_scene_obj_pos", },
-  // {"despawn_scene_obj", },
-  // {"show_scene", },
-  // {"print_scene", },
+        {"list_imgs", list_imgs},
+        {"import_img", import_img},
+        // {"remove_img", },
+        // {"rename_img", },
+        // {"query_imgs", },
+        // {"list_albums", },
+        // {"print_album", },
+        // {"create_album", },
+        // {"delete_album", },
+        // {"add_to_album", },
+        // {"remove_from_album", },
+        // {"sort_album", },
+        // {"list_scene_obj_tmpls", },
+        // {"create_scene_obj_tmpl", },
+        // {"remove_scene_obj_tmpl", },
+        // {"spawn_scene_obj", },
+        // {"set_scene_obj_pos", },
+        // {"despawn_scene_obj", },
+        // {"show_scene", },
+        // {"print_scene", },
 };
 
-int main() {
+int main()
+{
   // Implement your command loop according to the instructions in the comments
   // below.
 
@@ -193,10 +196,12 @@ int main() {
   string input;
   // Read lines from cin as long as the state of the stream is good.
   // This while loop condition is provided for you.
-  while (std::getline(cin, input)) {
+  while (std::getline(cin, input))
+  {
     // Skip over blank lines (provided for you). You do not need to handle
     // leading whitespace, and we will not test your code on that.
-    if (input.empty()) {
+    if (input.empty())
+    {
       continue;
     }
 
@@ -215,19 +220,23 @@ int main() {
   }
 }
 
-namespace {
+namespace
+{
   // Add your command function definitions here. The first two stubs
   // are provided as an illustration.
 
   // Library is const, SceneBuilder and Scene are unused
-  void list_imgs(istringstream&, const Library& lib, const SceneBuilder&, const Scene&) {
+  void list_imgs(istringstream &, const Library &lib, const SceneBuilder &, const Scene &)
+  {
   }
 
   // Library is non-const, SceneBuilder and Scene are unused
-  void import_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&) {
+  void import_img(istringstream &iss, Library &lib, const SceneBuilder &, const Scene &)
+  {
   }
 }
 
-namespace {
+namespace
+{
   // Define your other helper functions here, if any
 }
