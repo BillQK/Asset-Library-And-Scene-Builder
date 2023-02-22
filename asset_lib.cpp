@@ -251,11 +251,10 @@ namespace cs3520
     auto album_it = it->images;
 
     // check if image already exists in album list
-    auto image_check_in_album = lower_bound(album_it.begin(), album_it.end(), img_name,
-                                            [](const auto &image, const string &name)
-                                            { return image->get_name() < name; });
-    if (image_check_in_album != album_it.end() &&
-        (*image_check_in_album)->get_name() == img_name)
+    auto image_check_in_album =
+        find_if(album_it.begin(), album_it.end(), [&img_name](const auto &image)
+                { return image->get_name() == img_name; });
+    if (image_check_in_album != album_it.end())
     {
       throw InvalidUserInputException("Image " + img_name +
                                       " already part of album " + album_name);
@@ -266,10 +265,10 @@ namespace cs3520
   void Library::remove_from_album(const string &album_name, const string &img_name)
   {
     auto it = find_album(m_albums, album_name);
-    auto image_it = lower_bound(it->images.begin(), it->images.end(), img_name,
-                                [](const auto &image, const string &name)
-                                { return image->get_name() < name; });
-    if (image_it == it->images.end() || (*image_it)->get_name() != img_name)
+    auto image_it =
+        find_if(it->images.begin(), it->images.end(), [&img_name](const auto &image)
+                { return image->get_name() == img_name; });
+    if (image_it == it->images.end())
     {
       throw InvalidUserInputException("Image " + img_name + " not part of album " + album_name);
     }

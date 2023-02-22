@@ -66,16 +66,18 @@ namespace cs3520
     // Declare any private member variables, private member functions,
     // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-    // struct SceneObjectComparator
-    // {
-    //   bool operator()(const std::unique_ptr<SceneObject> &lhs, const std::unique_ptr<SceneObject> &rhs) const
-    //   {
-    //     return lhs->get_id() < rhs->get_id();
-    //   }
-    // };
+    struct SceneObjectComparator
+    {
+      using is_transparent = void;
 
-    std::set<std::unique_ptr<SceneObject>> m_scene_objects;
-    int counterId = 0;
+      bool operator()(const std::unique_ptr<SceneObject> &scene_obj, const int id) const;
+
+      bool operator()(const int id, const std::unique_ptr<SceneObject> &scene_obj) const;
+
+      bool operator()(const std::unique_ptr<SceneObject> &lhs, const std::unique_ptr<SceneObject> &rhs) const;
+    };
+
+    std::set<std::unique_ptr<SceneObject>, SceneObjectComparator> m_scene_objects;
   };
 
   // Maintains a collection of SceneObjectTemplates.
@@ -144,20 +146,15 @@ namespace cs3520
     SceneObjectTemplate(const std::string &name, const cs3520::Image image);
     // TASK: Implement get_name, get_texture, and set_texture
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
-    const std::string &get_name()
-    {
-      return m_name;
-    }
-    const sf::Texture &get_texture() const
+    const sf::Texture &SceneObjectTemplate::get_texture() const
     {
       return m_texture;
     }
-    void set_texture(const cs3520::Image &img)
+    const std::string &SceneObjectTemplate::get_name()
     {
-      sf::Texture m;
-      m.loadFromFile(img.get_path());
-      m_texture = m;
+      return m_name;
     }
+    void set_texture(const cs3520::Image &img);
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
 
   private:
@@ -221,7 +218,7 @@ namespace cs3520
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Add any private member variables you need here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-    std::shared_ptr<SceneObjectTemplate> m_tmpl; 
+    std::weak_ptr<SceneObjectTemplate> m_tmpl;
   };
 }
 
