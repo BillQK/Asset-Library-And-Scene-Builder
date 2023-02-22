@@ -8,6 +8,7 @@
 #include <iterator>
 #include <algorithm>
 #include <exception>
+#include <iostream>
 // Add any additional #includes here
 
 #include "exceptions.hpp"
@@ -162,15 +163,20 @@ namespace cs3520
     auto it = find_image(m_images, name);
     m_images.erase(it);
 
+    // Remove the image from all albums it is part of
     for (auto &album : m_albums)
     {
-      auto &image = album.images;
-      auto it = find_image(image, name);
-      if (it != image.end())
+      auto &images = album.images;
+      auto image_it =
+          find_if(images.begin(), images.end(), [&name](const auto &img)
+                  { return img->get_name() == name; });
+      if (image_it != images.end())
       {
-        image.erase(it);
+        images.erase(image_it);
       }
     }
+
+    // Remove the image from the library
   }
 
   void Library::rename_image(const string &current_name, const string &new_name)

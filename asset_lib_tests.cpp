@@ -141,7 +141,6 @@ TEST(test_get_name_not_found)
     library.import_image("imgs/lobster_link.jpg");
     library.import_image("imgs/lobster.png");
 
-
     std::shared_ptr<const cs3520::Image> crab = library.get_image("crabster.jpg");
     std::shared_ptr<const cs3520::Image> lobster = library.get_image("lobster.png");
     std::shared_ptr<const cs3520::Image> trogdor1 = library.get_image("trogdor1.png");
@@ -840,6 +839,31 @@ TEST(test_album_sort)
   ASSERT_EQUAL(deleted_album.at(0), "Album B");
   ASSERT_EQUAL(deleted_album.at(1), "Album C");
   ASSERT_EQUAL(deleted_album.at(2), "Album D");
+}
+
+TEST(delete_image_and_remove_from_album)
+{
+  cs3520::Library library = cs3520::Library();
+  library.import_image("imgs/crabster.jpg");
+  library.import_image("imgs/lobster.png");
+  library.import_image("imgs/trogdor1.png");
+  library.import_image("imgs/lobster_link.jpg");
+
+  library.create_album("lobster_album");
+  library.create_album("start_with_t");
+  library.create_album("crab");
+
+  library.add_to_album("lobster_album", "lobster.png");
+  library.add_to_album("lobster_album", "lobster_link.jpg");
+  library.add_to_album("start_with_t", "trogdor1.png");
+  library.add_to_album("start_with_t", "lobster.png");
+  library.add_to_album("crab", "crabster.jpg");
+
+  library.remove_image("lobster.png");
+  library.remove_image("lobster_link.jpg");
+
+  ASSERT_EQUAL(library.get_album("lobster_album").images.size(), 0);
+  ASSERT_EQUAL(library.get_album("start_with_t").images.size(), 1)
 }
 
 // To write a test that checks whether an exception is thrown, use the following
