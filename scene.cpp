@@ -4,12 +4,10 @@
 #include <algorithm>
 #include <cmath> // For std::round
 // Add any additional #includes here
+#include "scene.hpp"
+#include "exceptions.hpp"
 
 #include <SFML/Graphics.hpp>
-
-#include "scene.hpp"
-#include "asset_lib.hpp"
-#include "exceptions.hpp"
 
 using namespace std;
 namespace
@@ -18,11 +16,11 @@ namespace
   auto find_scene_objects(Container &scenes, const int id)
   {
     auto it =
-        lower_bound(scenes.begin(), scenes.end(), id,
-                    [](const auto &scene, const int id)
-                    { return scene->get_id() < id; });
+        find_if(scenes.begin(), scenes.end(),
+                [&id](const auto &scene)
+                { return scene->get_id() == id; });
 
-    if (it == scenes.end() || (*it)->get_id() != id)
+    if (it == scenes.end())
     {
       throw cs3520::InvalidUserInputException("Scene object " + to_string(id) + " not found");
     }
@@ -33,6 +31,21 @@ namespace
 namespace cs3520
 {
   // TASK: Implement the Scene member functions.
+  bool Scene::SceneObjectComparator::operator()(const std::unique_ptr<SceneObject> &scene_obj, const int id) const
+  {
+    return scene_obj->get_id() < id;
+  }
+
+  bool Scene::SceneObjectComparator::operator()(const int id, const std::unique_ptr<SceneObject> &scene_obj) const
+  {
+    return id < scene_obj->get_id();
+  }
+
+  bool Scene::SceneObjectComparator::operator()(const std::unique_ptr<SceneObject> &lhs, const std::unique_ptr<SceneObject> &rhs) const
+  {
+    return lhs->get_id() < rhs->get_id();
+  }
+
   void Scene::add_scene_obj(unique_ptr<SceneObject> scene_obj)
   {
     m_scene_objects.insert(move(scene_obj));
@@ -56,6 +69,7 @@ namespace cs3520
              [&os](const unique_ptr<SceneObject> &scene_obj)
              {
                scene_obj->print(os);
+               os << endl;
              });
   }
   void Scene::render(sf::RenderWindow &window) const
@@ -72,6 +86,56 @@ namespace cs3520
   // TASK: Implement the SceneBuilder member functions.
 
   // --------------------------------------------------------------------------------------------
+  vector<std::string> SceneBuilder::get_scene_object_template_names() const
+  {
+    vector<string> result;
+    transform(
+        m_templates.begin(), m_templates.end(),
+        back_inserter(result),
+        [](const auto &element)
+        {
+          return element.first;
+        });
+    return result;
+  }
+
+  void SceneBuilder::create_scene_obj_template(const std::string &name, const cs3520::Image &img)
+  {
+    // Check if a template with that name already exists
+    auto it = m_templates.find(name);
+    if (it != m_templates.end())
+    {
+      throw InvalidUserInputException("Scene object template " + name + " already exists");
+    }
+    // Add the template
+    m_templates.emplace(name, SceneObjectTemplate(name, img));
+  }
+
+  void SceneBuilder::delete_scene_obj_template(const std::string &name)
+  {
+    // Check if template with the given name exists
+    if (m_templates.find(name) == m_templates.end())
+    {
+      throw InvalidUserInputException("Scene object template " + name + " not found");
+    }
+
+    // Delete the template
+    m_templates.erase(name);
+  }
+  std::unique_ptr<SceneObject> SceneBuilder::instantiate_scene_obj(
+      const std::string &scene_object_template_name,
+      int scene_object_id) const
+  {
+    // Check if the template exists
+    auto iter = m_templates.find(scene_object_template_name);
+    if (iter == m_templates.end())
+    {
+      throw InvalidUserInputException("Scene object template " + scene_object_template_name + " not found");
+    }
+
+    // Create a new SceneObject instance from the template and return it
+    return std::make_unique<SceneObject>(scene_object_id, make_shared<SceneObjectTemplate>(iter->second));
+  }
 
   // TASK: Implement the SceneObjectTemplate constructor(s) and member functions.
   // You must decide which of those can go in the .hpp file and which should
@@ -111,19 +175,24 @@ namespace cs3520
   {
     window.draw(m_sprite);
     window.display();
-    if (m_tmpl)
+    shared_ptr<SceneObjectTemplate> new_tmpl = m_tmpl.lock();
+    if (new_tmpl)
     {
-      cerr << "Template " + m_tmpl->get_name() << " was deleted" << endl;
+      cerr << "Template " + new_tmpl->get_name() << " was deleted" << endl;
     }
   }
 
   void SceneObject::print(ostream &os) const
   {
-    os << m_tmpl->get_name() << " object "
+    shared_ptr<SceneObjectTemplate> new_tmpl = m_tmpl.lock();
+    if (new_tmpl)
+    {
+      cerr << "Template " + new_tmpl->get_name() << " was deleted" << endl;
+    }
+    os << new_tmpl->get_name() << " object "
        << to_string(m_id) << " at position "
        << to_string(int(round(m_sprite.getPosition().x)))
-       << ", " << to_string(int(round(m_sprite.getPosition().y)))
-       << endl;
+       << ", " << to_string(int(round(m_sprite.getPosition().y)));
   }
 
 }

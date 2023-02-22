@@ -66,16 +66,18 @@ namespace cs3520
     // Declare any private member variables, private member functions,
     // or transparent comparator functors needed by your implementation here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-    // struct SceneObjectComparator
-    // {
-    //   bool operator()(const std::unique_ptr<SceneObject> &lhs, const std::unique_ptr<SceneObject> &rhs) const
-    //   {
-    //     return lhs->get_id() < rhs->get_id();
-    //   }
-    // };
+    struct SceneObjectComparator
+    {
+      using is_transparent = void;
 
-    std::set<std::unique_ptr<SceneObject>> m_scene_objects;
-    
+      bool operator()(const std::unique_ptr<SceneObject> &scene_obj, const int id) const;
+
+      bool operator()(const int id, const std::unique_ptr<SceneObject> &scene_obj) const;
+
+      bool operator()(const std::unique_ptr<SceneObject> &lhs, const std::unique_ptr<SceneObject> &rhs) const;
+    };
+
+    std::set<std::unique_ptr<SceneObject>, SceneObjectComparator> m_scene_objects;
   };
 
   // Maintains a collection of SceneObjectTemplates.
@@ -221,7 +223,7 @@ namespace cs3520
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Add any private member variables you need here.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-    std::shared_ptr<SceneObjectTemplate> m_tmpl; 
+    std::weak_ptr<SceneObjectTemplate> m_tmpl;
   };
 }
 

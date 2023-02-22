@@ -6,7 +6,6 @@
 #include "exceptions.hpp"
 
 using std::operator""s;
-using namespace cs3520;
 
 // Add your Library unit tests to this file
 TEST(write_your_tests_here)
@@ -18,7 +17,7 @@ TEST(write_your_tests_here)
 TEST(test_image_constructor_with_path)
 {
   // Create a test image
-  Image img = Image("/acd.pdf");
+  cs3520::Image img = cs3520::Image("/acd.pdf");
   ASSERT_EQUAL(img.get_name(), "acd.pdf");
   ASSERT_EQUAL(img.get_path(), "/acd.pdf");
 
@@ -44,7 +43,7 @@ TEST(test_print)
 // Library Test Cases
 TEST(test_import_images_correct)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
 
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster_link.jpg");
@@ -56,7 +55,7 @@ TEST(test_import_images_correct)
 
 TEST(test_import_images_failed_images_exists)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   try
   {
     library.import_image("imgs/crabster.jpg");
@@ -67,7 +66,7 @@ TEST(test_import_images_failed_images_exists)
     // when importing the third image with the same name
     ASSERT_TRUE(false);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     // Check if the exception message is correct
     ASSERT_EQUAL("Image lobster_link.jpg already exists"s,
@@ -77,7 +76,7 @@ TEST(test_import_images_failed_images_exists)
 
 TEST(test_import_images_failed_images_path_does_not_exist)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   try
   {
     library.import_image("imgs/crabster.jpg");
@@ -88,7 +87,7 @@ TEST(test_import_images_failed_images_path_does_not_exist)
     // when importing the third image with the same name
     ASSERT_TRUE(false);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     // Check if the exception message is correct
     ASSERT_EQUAL("Couldn't find file imgs/lobster_link.png"s,
@@ -98,7 +97,7 @@ TEST(test_import_images_failed_images_path_does_not_exist)
 
 TEST(test_list_images)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -115,16 +114,16 @@ TEST(test_list_images)
 
 TEST(test_get_image)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
   library.import_image("imgs/lobster_link.jpg");
 
-  std::shared_ptr<const Image> crab = library.get_image("crabster.jpg");
-  std::shared_ptr<const Image> lobster = library.get_image("lobster.png");
-  std::shared_ptr<const Image> trogdor1 = library.get_image("trogdor1.png");
-  std::shared_ptr<const Image> lobster_link = library.get_image("lobster_link.jpg");
+  std::shared_ptr<const cs3520::Image> crab = library.get_image("crabster.jpg");
+  std::shared_ptr<const cs3520::Image> lobster = library.get_image("lobster.png");
+  std::shared_ptr<const cs3520::Image> trogdor1 = library.get_image("trogdor1.png");
+  std::shared_ptr<const cs3520::Image> lobster_link = library.get_image("lobster_link.jpg");
 
   ASSERT_EQUAL(crab->get_name(), "crabster.jpg");
   ASSERT_EQUAL(lobster->get_name(), "lobster.png");
@@ -136,19 +135,19 @@ TEST(test_get_name_not_found)
 {
   try
   {
-    Library library = Library();
+    cs3520::Library library = cs3520::Library();
     library.import_image("imgs/crabster.jpg");
     library.import_image("imgs/lobster.png");
     library.import_image("imgs/trogdor1.png");
     library.import_image("imgs/lobster_link.jpg");
 
-    std::shared_ptr<const Image> crab = library.get_image("crabster.jpg");
-    std::shared_ptr<const Image> lobster = library.get_image("lobster.png");
-    std::shared_ptr<const Image> trogdor1 = library.get_image("trogdor1.png");
-    std::shared_ptr<const Image> lobster_link = library.get_image("lobster_link.png");
+    std::shared_ptr<const cs3520::Image> crab = library.get_image("crabster.jpg");
+    std::shared_ptr<const cs3520::Image> lobster = library.get_image("lobster.png");
+    std::shared_ptr<const cs3520::Image> trogdor1 = library.get_image("trogdor1.png");
+    std::shared_ptr<const cs3520::Image> lobster_link = library.get_image("lobster_link.png");
     ASSERT_TRUE(false)
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Image lobster_link.png not found"s, e.what());
   }
@@ -156,7 +155,7 @@ TEST(test_get_name_not_found)
 
 TEST(test_remove_image)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -176,7 +175,7 @@ TEST(test_remove_image_failed)
 {
   try
   {
-    Library library = Library();
+    cs3520::Library library = cs3520::Library();
     library.import_image("imgs/crabster.jpg");
     library.import_image("imgs/lobster.png");
     library.import_image("imgs/trogdor1.png");
@@ -185,7 +184,7 @@ TEST(test_remove_image_failed)
     library.remove_image("crabster.png");
     ASSERT_TRUE(false)
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Image crabster.png not found"s, e.what());
   }
@@ -193,7 +192,7 @@ TEST(test_remove_image_failed)
 
 TEST(test_rename_image)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -212,7 +211,7 @@ TEST(test_rename_image)
 TEST(test_rename_image_library_state_after_rename_image)
 {
   // Create a new library and import some images
-  Library library;
+  cs3520::Library library;
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -262,7 +261,7 @@ TEST(test_rename_image_library_state_after_rename_image)
   library.create_album("crabster");
   library.add_to_album("crabster", "bestcrabster.jpg");
 
-  Album album = library.get_album("crabster");
+  cs3520::Album album = library.get_album("crabster");
 
   ASSERT_EQUAL(album.images.at(0)->get_name(), "bestcrabster.jpg");
 
@@ -277,7 +276,7 @@ TEST(test_rename_image_failed_name_exists)
 {
   try
   {
-    Library library = Library();
+    cs3520::Library library = cs3520::Library();
     library.import_image("imgs/crabster.jpg");
     library.import_image("imgs/lobster.png");
     library.import_image("imgs/trogdor1.png");
@@ -286,7 +285,7 @@ TEST(test_rename_image_failed_name_exists)
     library.rename_image("crabster.jpg", "lobster.png");
     ASSERT_TRUE(false)
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Image lobster.png already exists"s, e.what())
   }
@@ -294,7 +293,7 @@ TEST(test_rename_image_failed_name_exists)
 
 TEST(test_query_images)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -308,7 +307,7 @@ TEST(test_query_images)
 
 TEST(test_query_images_jpg_test)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -322,7 +321,7 @@ TEST(test_query_images_jpg_test)
 
 TEST(test_query_images_png_test)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -336,7 +335,7 @@ TEST(test_query_images_png_test)
 
 TEST(test_query_images_t_test)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -352,12 +351,12 @@ TEST(test_query_images_t_test)
 
 TEST(test_query_images_empty_string)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
   library.import_image("imgs/lobster_link.jpg");
-  
+
   // Query all images
   auto images = library.query_images("");
 
@@ -366,7 +365,7 @@ TEST(test_query_images_empty_string)
 
 TEST(test_create_and_get_album)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -383,7 +382,7 @@ TEST(test_create_and_get_album)
 
 TEST(test_create_album_sorted)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
 
   // Add albums to library
   library.create_album("Zoo");
@@ -400,7 +399,7 @@ TEST(test_create_album_album_exists)
 {
   try
   {
-    Library library = Library();
+    cs3520::Library library = cs3520::Library();
     library.import_image("imgs/crabster.jpg");
     library.import_image("imgs/lobster.png");
     library.import_image("imgs/trogdor1.png");
@@ -411,7 +410,7 @@ TEST(test_create_album_album_exists)
     library.create_album("lobster_album");
     ASSERT_TRUE(false)
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Album lobster_album already exists"s, e.what());
   }
@@ -421,7 +420,7 @@ TEST(test_get_album_failed_album_does_not_exists)
 {
   try
   {
-    Library library = Library();
+    cs3520::Library library = cs3520::Library();
     library.import_image("imgs/crabster.jpg");
     library.import_image("imgs/lobster.png");
     library.import_image("imgs/trogdor1.png");
@@ -434,7 +433,7 @@ TEST(test_get_album_failed_album_does_not_exists)
     library.get_album("crabster");
     ASSERT_TRUE(false)
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Album crabster not found"s, e.what());
   }
@@ -444,14 +443,14 @@ TEST(test_delete_album_album_not_found)
 {
   try
   {
-    Library library = Library();
+    cs3520::Library library = cs3520::Library();
     library.import_image("imgs/crabster.jpg");
     library.create_album("lobster_album");
 
     library.delete_album("crab_album");
     ASSERT_TRUE(false); // If exception is not thrown test fails
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Album crab_album not found"s, e.what());
   }
@@ -461,7 +460,7 @@ TEST(test_delete_album_does_not_exist)
 {
   try
   {
-    Library library = Library();
+    cs3520::Library library = cs3520::Library();
     library.import_image("imgs/crabster.jpg");
     library.import_image("imgs/lobster.png");
     library.import_image("imgs/trogdor1.png");
@@ -474,7 +473,7 @@ TEST(test_delete_album_does_not_exist)
     library.delete_album("fish");
     ASSERT_TRUE(false);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Album fish not found"s, e.what());
   }
@@ -482,7 +481,7 @@ TEST(test_delete_album_does_not_exist)
 
 TEST(test_delete_album)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -505,7 +504,7 @@ TEST(test_delete_album)
     library.get_album("start_with_t");
     ASSERT_TRUE(false);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Album start_with_t not found"s, e.what());
   }
@@ -518,23 +517,23 @@ TEST(test_delete_album)
   // Verify that images were removed from album
   try
   {
-    Album lobster_album = library.get_album("lobster_album");
+    cs3520::Album lobster_album = library.get_album("lobster_album");
     ASSERT_EQUAL(lobster_album.images.size(), 2);
     ASSERT_EQUAL(lobster_album.images[0]->get_name(), "lobster.png");
     ASSERT_EQUAL(lobster_album.images[1]->get_name(), "lobster_link.jpg");
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_TRUE(false);
   }
 
   try
   {
-    Album crab_album = library.get_album("crab");
+    cs3520::Album crab_album = library.get_album("crab");
     ASSERT_EQUAL(crab_album.images.size(), 1);
     ASSERT_EQUAL(crab_album.images.at(0)->get_name(), "crabster.jpg");
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_TRUE(false);
   }
@@ -548,7 +547,7 @@ TEST(test_delete_album)
 
 TEST(test_add_to_album)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -571,7 +570,7 @@ TEST(test_add_to_album)
     library.add_to_album("lobster_album", "lobster.png");
     ASSERT_TRUE(false);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Image lobster.png already part of album lobster_album"s, e.what());
   }
@@ -589,7 +588,7 @@ TEST(test_add_to_album)
     library.add_to_album("nonexistent_album", "trogdor1.png");
     ASSERT_TRUE(false);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Album nonexistent_album not found"s, e.what());
   }
@@ -597,7 +596,7 @@ TEST(test_add_to_album)
 
 TEST(test_album_image_order)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -631,7 +630,7 @@ TEST(test_album_image_order)
 
 TEST(test_add_to_album_many_albums_to_one_image)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -655,7 +654,7 @@ TEST(test_add_to_album_many_albums_to_one_image)
 // test
 TEST(test_add_to_album_lower_bound_does_not_work)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -680,7 +679,7 @@ TEST(test_add_to_album_lower_bound_does_not_work)
     library.add_to_album("lobster_album", "lobster.png");
     ASSERT_TRUE(false);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Image lobster.png already part of album lobster_album"s, e.what());
   }
@@ -688,7 +687,7 @@ TEST(test_add_to_album_lower_bound_does_not_work)
 
 TEST(test_remove_from_album_lower_bound_does_not_work)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -713,7 +712,7 @@ TEST(test_remove_from_album_lower_bound_does_not_work)
     library.remove_from_album("lobster_album", "lobster.png");
     ASSERT_TRUE(true);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_TRUE(false);
   }
@@ -721,7 +720,7 @@ TEST(test_remove_from_album_lower_bound_does_not_work)
 
 TEST(test_remove_from_album)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -739,7 +738,7 @@ TEST(test_remove_from_album)
     library.remove_from_album("non_existent_album", "trogdor1.png");
     ASSERT_TRUE(false);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Album non_existent_album not found"s, e.what());
   }
@@ -749,7 +748,7 @@ TEST(test_remove_from_album)
     library.remove_from_album("lobster_album", "non_existent_image");
     ASSERT_TRUE(false);
   }
-  catch (InvalidUserInputException &e)
+  catch (cs3520::InvalidUserInputException &e)
   {
     ASSERT_EQUAL("Image non_existent_image not part of album lobster_album"s, e.what());
   }
@@ -757,7 +756,7 @@ TEST(test_remove_from_album)
 
 TEST(TestDeleteAlbum)
 {
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.create_album("Album C");
   library.create_album("Album A");
   library.create_album("Album D");
@@ -777,7 +776,7 @@ TEST(TestDeleteAlbum)
 TEST(test_sort_album)
 {
   // create library instance and import some images
-  Library library = Library();
+  cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
   library.import_image("imgs/trogdor1.png");
@@ -798,14 +797,15 @@ TEST(test_sort_album)
   std::vector<std::string> actual_order;
 
   std::transform(library.get_album("my_album").images.begin(),
-                 library.get_album("my_album").images.end(), back_inserter(actual_order), [](const std::shared_ptr<Image> &image)
+                 library.get_album("my_album").images.end(), back_inserter(actual_order),
+                 [](const std::shared_ptr<cs3520::Image> &image)
                  { return image->get_name(); });
   ASSERT_EQUAL(expected_order, actual_order);
 }
 
 TEST(test_album_sort)
 {
-  Library lib;
+  cs3520::Library lib;
 
   // Add some albums to the library
   lib.create_album("Album C");
