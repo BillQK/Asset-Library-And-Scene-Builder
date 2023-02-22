@@ -6,6 +6,7 @@
 // Add any additional #includes here
 #include "scene.hpp"
 #include "exceptions.hpp"
+#include "asset_lib.hpp"
 
 #include <SFML/Graphics.hpp>
 

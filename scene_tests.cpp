@@ -4,6 +4,8 @@
 #include "scene.hpp"
 #include "exceptions.hpp"
 #include "asset_lib.hpp"
+#include "asset_lib.cpp"
+
 
 // Add your Scene, SceneBuilder, SceneObjectTemplate, and SceneObject unit tests
 // to this file.

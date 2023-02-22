@@ -117,8 +117,8 @@ TEST(test_get_image)
   cs3520::Library library = cs3520::Library();
   library.import_image("imgs/crabster.jpg");
   library.import_image("imgs/lobster.png");
-  library.import_image("imgs/trogdor1.png");
   library.import_image("imgs/lobster_link.jpg");
+  library.import_image("imgs/trogdor1.png");
 
   std::shared_ptr<const cs3520::Image> crab = library.get_image("crabster.jpg");
   std::shared_ptr<const cs3520::Image> lobster = library.get_image("lobster.png");
@@ -137,9 +137,10 @@ TEST(test_get_name_not_found)
   {
     cs3520::Library library = cs3520::Library();
     library.import_image("imgs/crabster.jpg");
-    library.import_image("imgs/lobster.png");
     library.import_image("imgs/trogdor1.png");
     library.import_image("imgs/lobster_link.jpg");
+    library.import_image("imgs/lobster.png");
+
 
     std::shared_ptr<const cs3520::Image> crab = library.get_image("crabster.jpg");
     std::shared_ptr<const cs3520::Image> lobster = library.get_image("lobster.png");
