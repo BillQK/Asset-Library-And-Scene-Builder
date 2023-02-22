@@ -117,7 +117,9 @@ using std::endl;
 using cs3520::Library;
 using cs3520::SceneBuilder;
 using cs3520::Scene;
+using cs3520::Image;
 // Add other "using" statements here
+using namespace std;
 
 namespace {
   // Declare any helper functions you need here, if any.
@@ -140,6 +142,10 @@ namespace {
   void list_imgs(istringstream& iss, const Library& lib, const SceneBuilder&, const Scene&);
   // Library is non-const, SceneBuilder and Scene are unused.
   void import_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void remove_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void rename_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void query_imgs(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void list_albums(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
 }
 
 // This is a map of strings to functions. By declaring the type of the functions
@@ -155,19 +161,17 @@ namespace {
 //
 // Note: Do NOT write a function to implement the "quit" command.
 // Instead, check for "quit" in the command loop in main.
-const map<
-  string, std::function<void (istringstream&, Library&, SceneBuilder&, Scene&)>
-> command_funcs = {
+const map<string, std::function<void (istringstream&, Library&, SceneBuilder&, Scene&)>> command_funcs = {
   // Add your command functions to this map.
   // Wrap the name of each function in std::function, as this will allow us to
   // use the proper const modifiers on the function parameters.
 
   {"list_imgs", list_imgs},
   {"import_img", import_img},
-  // {"remove_img", },
-  // {"rename_img", },
-  // {"query_imgs", },
-  // {"list_albums", },
+  {"remove_img", remove_img},
+  {"rename_img", rename_img},
+  {"query_imgs", query_imgs},
+  {"list_albums", list_albums},
   // {"print_album", },
   // {"create_album", },
   // {"delete_album", },
@@ -189,6 +193,9 @@ int main() {
   // below.
 
   // Declare Library, SceneBuilder, and Scene variables.
+  Library lib;
+  SceneBuilder scene_builder;
+  Scene scene;
 
   string input;
   // Read lines from cin as long as the state of the stream is good.
@@ -203,15 +210,45 @@ int main() {
     // Create an istringstream from the line that we read in.
     // Read the first word as the command to run.
     // If the command is "quit", exit the program with zero status.
+    string input_cmd;
+    istringstream iss(input);
+    iss >> input_cmd;
+    if(input_cmd == "quit") {
+      return 0;
+    }
+    // cout << "ISS INPUT: " << cmd << endl; // it only reads the first word entered
 
     // Look up the command function in the map of commands.
     // If that command doesn't exist, print "Unrecognized command"
     // to cout followed by a newline.
 
+    // // using iterator
+    // auto it = find_if(command_funcs.being, command_funcs.end,
+    //                   [&input_cmd](const auto& func) {
+    //                     return func.first == input_cmd;
+    //                   });
+    // // if cmd not found
+    // if(it == command_funcs.end()) {
+    //   cout << "Unrecognized command" << endl;
+    // }
+
+    if(command_funcs.find(input_cmd) == command_funcs.end()) {
+      cout << "Unrecognized command" << endl;
+    }
+
     // If it does exist, call the command function, passing in
     // the library, scene builder, and scene objects you created.
     // If InvalidUserInputException is thrown, print out the message
     // returned by the "what()" member function on the exception.
+    else {
+      // gets & calls the function
+      try {
+        command_funcs.at(input_cmd)(iss, lib, scene_builder, scene);
+      }
+      catch(cs3520::InvalidUserInputException &e) {
+        cerr << e.what() << endl;
+      }
+    }
   }
 }
 
@@ -219,12 +256,47 @@ namespace {
   // Add your command function definitions here. The first two stubs
   // are provided as an illustration.
 
-  // Library is const, SceneBuilder and Scene are unused
+  // Library is const, istringstream, SceneBuilder and Scene are unused
   void list_imgs(istringstream&, const Library& lib, const SceneBuilder&, const Scene&) {
+    vector<shared_ptr<const Image>> images = lib.list_images();
+    cout << "Images in library: " << endl;
+    copy(cbegin(images), cend(images), ostream_iterator<shared_ptr<const Image>>(cout, "\n"));
+    cout << "";
   }
 
   // Library is non-const, SceneBuilder and Scene are unused
   void import_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&) {
+    string file_path;
+    iss >> file_path;
+    lib.import_image(file_path);
+  }
+
+  // Library is non-const, SceneBuilder and Scene are unused
+  void remove_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&) {
+    // QUESTION: does this have to be const string?
+    string name;
+    iss >> name;
+    lib.remove_image(name);
+  }
+
+  // Library is non-const, SceneBuilder and Scene are unused
+  void rename_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&) {
+    string current_name;
+    string new_name;
+    iss >> current_name >> new_name;
+    lib.rename_image(current_name, new_name);
+  }
+
+  // finish the error msg & others
+  void query_imgs(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&) {
+    string query;
+    iss >> query;
+    lib.query_images(query);
+  }
+
+  // finish
+  void list_albums(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&) {
+    cout << "Albums:" << endl;
   }
 }
 
