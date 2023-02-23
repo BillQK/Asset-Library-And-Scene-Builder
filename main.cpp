@@ -160,12 +160,14 @@ namespace
                             const Scene&);
   void create_scene_obj_tmpl(istringstream& iss, const Library& lib, SceneBuilder& builder,
                              const Scene&);
-  void remove_scene_obj_tmpl(istringstream& iss, const Library&, SceneBuilder& builder, const Scene&);
-  void spawn_scene_obj(istringstream& iss, const Library&, const SceneBuilder& builder, Scene& scene);
+  void remove_scene_obj_tmpl(istringstream& iss, const Library&, SceneBuilder& builder,
+                             const Scene&);
+  void spawn_scene_obj(istringstream& iss, const Library&, const SceneBuilder& builder,
+                       Scene& scene);
   void set_scene_obj_pos(istringstream& iss, const Library&, const SceneBuilder&, Scene& scene);
   void despawn_scene_obj(istringstream& iss, const Library&, const SceneBuilder&, Scene& scene);
   void show_scene(istringstream& iss, const Library&, const SceneBuilder&, const Scene& scene);
-  void print_scene(istringstream&, const Library&, const SceneBuilder&, Scene& scene);
+  void print_scene(istringstream&, const Library&, const SceneBuilder&, const Scene& scene);
 }
 
 // This is a map of strings to functions. By declaring the type of the functions
@@ -246,17 +248,6 @@ int main()
     // Look up the command function in the map of commands.
     // If that command doesn't exist, print "Unrecognized command"
     // to cout followed by a newline.
-
-    // // using iterator
-    // auto it = find_if(command_funcs.being, command_funcs.end,
-    //                   [&input_cmd](const auto& func) {
-    //                     return func.first == input_cmd;
-    //                   });
-    // // if cmd not found
-    // if(it == command_funcs.end()) {
-    //   cout << "Unrecognized command" << endl;
-    // }
-
     if(command_funcs.find(input_cmd) == command_funcs.end()) {
       cout << "Unrecognized command" << endl;
     }
@@ -470,7 +461,7 @@ namespace
   }
 
   // prints objects in the scene
-  void print_scene(istringstream&, const Library&, const SceneBuilder&, Scene& scene) {
+  void print_scene(istringstream&, const Library&, const SceneBuilder&, const Scene& scene) {
     scene.print(cout);
   }
 

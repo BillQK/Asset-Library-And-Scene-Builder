@@ -147,9 +147,11 @@ namespace cs3520 {
   SceneObjectTemplate::SceneObjectTemplate(const std::string &name) : m_name(name) {}
   SceneObjectTemplate::SceneObjectTemplate(const std::string &name,
                                            const cs3520::Image image) : m_name(name) {
-    sf::Texture m;
-    m.loadFromFile(image.get_path());
-    m_texture = m;
+    // sf::Texture m;
+    // m.loadFromFile(image.get_path());
+    // m_texture = m;
+    set_texture(image);
+    // should it do anything if img not found ?
   }
 
   void SceneObjectTemplate::set_texture(const cs3520::Image &img) {

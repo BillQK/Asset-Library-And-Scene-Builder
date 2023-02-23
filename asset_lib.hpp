@@ -241,7 +241,7 @@ namespace cs3520
     // Implement a constructor that takes in a std::filesystem::path and initializes
     // the Image's member variables. You must decide whether to take in the
     // path variable by value, pointer, or reference.
-    Image(std::filesystem::path path);
+    Image(const std::filesystem::path path);
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
 
     const std::string &get_name() const {
