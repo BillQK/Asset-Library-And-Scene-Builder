@@ -189,7 +189,7 @@ namespace cs3520
     //   s=number of images in the requested album
     // - O(1) (amortized) to add the image to the album.
     void add_to_album(const std::string &album_name, const std::string &img_name);
-    
+
     // Removes the specified image from the specified album.
     //
     // Throws InvalidUserInputException with the message "Album " + name + " not found"
@@ -252,7 +252,10 @@ namespace cs3520
     // the Image's member variables. You must decide whether to take in the
     // path variable by value, pointer, or reference.
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-    Image(std::filesystem::path path);
+    Image(std::filesystem::path path) : m_path(path)
+    {
+      m_name = path.filename().string();
+    }
 
     const std::string &get_name() const
     {

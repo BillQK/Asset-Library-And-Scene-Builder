@@ -113,12 +113,6 @@ namespace cs3520
   }
 
   // TASK: Implement the Library member functions.
-
-  Image::Image(filesystem::path fs) : m_path(fs)
-  {
-    m_name = fs.filename().string();
-  }
-
   vector<shared_ptr<const Image>> Library::list_images() const
   {
     vector<shared_ptr<const Image>> images;
