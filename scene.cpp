@@ -49,7 +49,10 @@ namespace cs3520 {
 
   // add given object to set m_scene_objects
   void Scene::add_scene_obj(unique_ptr<SceneObject> scene_obj) {
-    m_scene_objects.insert(move(scene_obj));
+    if(scene_obj){
+      m_scene_objects.insert(move(scene_obj));
+    }
+    // m_scene_objects.insert(move(scene_obj));
   }
 
   // remove object and throw error if not found
@@ -185,33 +188,42 @@ namespace cs3520 {
 
   // renders a sprite to the given window
   void SceneObject::draw(sf::RenderWindow &window) const {
-    shared_ptr<SceneObjectTemplate> new_tmpl = m_tmpl.lock();
+    // shared_ptr<SceneObjectTemplate> new_tmpl = m_tmpl.lock();
 
     // if tmpl exists, render sprite to window
-    if (!new_tmpl) {
+    if (!m_tmpl) {
       window.draw(m_sprite);
       // should position be set to 0,0?
       window.display();
     }
     // else it no longer exists, print this instead of drawing
     else {
-      cerr << "Template " + new_tmpl->get_name() << " was deleted" << endl;
+      cerr << "Template " + m_tmpl->get_name() << " was deleted" << endl;
       
     }
   }
 
   void SceneObject::print(ostream &os) const {
-    shared_ptr<SceneObjectTemplate> new_tmpl = m_tmpl.lock();
-
-    os << new_tmpl->get_name() << " object "
+    // if pointer not been deleted
+    if(m_tmpl.use_count() != 0) {
+      os << m_tmpl->get_name() << " object "
       << to_string(m_id) << " at position "
       << to_string(int(round(m_sprite.getPosition().x)))
       << ", " << to_string(int(round(m_sprite.getPosition().y)));
+    }
+    else {
+      os << " (template " + m_tmpl->get_name() << " was deleted";
+    }
+
+    // os << new_tmpl->get_name() << " object "
+    //   << to_string(m_id) << " at position "
+    //   << to_string(int(round(m_sprite.getPosition().x)))
+    //   << ", " << to_string(int(round(m_sprite.getPosition().y)));
 
     // if template no longer exists
-    if (!new_tmpl) {
-      os << " (template " + new_tmpl->get_name() << " was deleted";
-    }
+    // if (m_tmpl.use_count() == 0) {
+    //   os << " (template " + new_tmpl->get_name() << " was deleted";
+    // }
   }
 
 }  // namespace cs3520

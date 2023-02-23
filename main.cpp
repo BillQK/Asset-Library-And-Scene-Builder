@@ -428,6 +428,7 @@ namespace
     string tmpl_name;
     iss >> tmpl_name;
     static int next_id = 1;
+    // creates a scene obj with the id 
     unique_ptr<cs3520::SceneObject> scene_obj = builder.instantiate_scene_obj(tmpl_name, next_id);
     ++next_id;
     // add scene object to the scene

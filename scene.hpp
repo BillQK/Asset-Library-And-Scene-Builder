@@ -213,7 +213,7 @@ namespace cs3520 {
     sf::Sprite m_sprite;
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Add any private member variables you need here.
-    std::weak_ptr<SceneObjectTemplate> m_tmpl;
+    std::shared_ptr<SceneObjectTemplate> m_tmpl;
     // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
   };
 }
