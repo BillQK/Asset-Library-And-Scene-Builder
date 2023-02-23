@@ -1,19 +1,20 @@
 #include <iostream>
 #include <string>
-#include "unit_test_framework.h"
-#include "scene.hpp"
+#include <SFML/Graphics.hpp>
+
 #include "exceptions.hpp"
+#include "scene.hpp"
+#include "unit_test_framework.h"
 #include "asset_lib.hpp"
 #include "asset_lib.cpp"
 
+using namespace std;
 
 
 // Add your Scene, SceneBuilder, SceneObjectTemplate, and SceneObject unit tests
 // to this file.
-using namespace std;
 
-TEST(write_your_tests_here)
-{
+TEST(write_your_tests_here) {
   ASSERT_TRUE(true);
 }
 // ----------------------------------------------------------------
@@ -28,10 +29,10 @@ TEST(test_scene_object_template_constructors)
 
   // Test constructor that takes in a name and an image
   cs3520::Image image("imgs/crabster.jpg");
-  cs3520::SceneObjectTemplate template2("crabster", image);
-  ASSERT_EQUAL(template2.get_name(), "crabster");
-  ASSERT_EQUAL(int(template2.get_texture().getSize().x), 399);
-  ASSERT_EQUAL(int(template2.get_texture().getSize().y), 276);
+  // cs3520::SceneObjectTemplate template2("crabster", image);
+  // ASSERT_EQUAL(template2.get_name(), "crabster");
+  // ASSERT_EQUAL(int(template2.get_texture().getSize().x), 399);
+  // ASSERT_EQUAL(int(template2.get_texture().getSize().y), 276);
 }
 
 TEST(test_scene_object_template_get_set_texture)

@@ -389,7 +389,8 @@ TEST(test_create_album_sorted)
   library.create_album("Botanical Garden");
   library.create_album("Amusement Park");
 
-  std::vector<std::string> names = std::vector<std::string>{"Amusement Park", "Botanical Garden", "Zoo"};
+  std::vector<std::string> names = std::vector<std::string>{"Amusement Park", "Botanical Garden",
+                                                            "Zoo"};
 
   // Check that albums are sorted alphabetically
   ASSERT_EQUAL(library.get_album_names(), names);
@@ -793,7 +794,8 @@ TEST(test_sort_album)
   library.sort_album("my_album");
 
   // verify that the images in the album are sorted
-  std::vector<std::string> expected_order = {"crabster.jpg", "lobster.png", "lobster_link.jpg", "trogdor1.png"};
+  std::vector<std::string> expected_order = {"crabster.jpg", "lobster.png", "lobster_link.jpg",
+                                             "trogdor1.png"};
   std::vector<std::string> actual_order;
 
   std::transform(library.get_album("my_album").images.begin(),
