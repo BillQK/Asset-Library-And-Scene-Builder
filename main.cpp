@@ -141,13 +141,31 @@ namespace
   // The first two stubs are provided for you to illustrate this.
 
   // Library is const, SceneBuilder and Scene are unused.
-  void list_imgs(istringstream &iss, const Library &lib, const SceneBuilder &, const Scene &);
+  void list_imgs(istringstream& iss, const Library& lib, const SceneBuilder &, const Scene &);
   // Library is non-const, SceneBuilder and Scene are unused.
   void import_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
   void remove_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
   void rename_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
-  void query_imgs(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
-  void list_albums(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void query_imgs(istringstream& iss, const Library& lib, const SceneBuilder&, const Scene&);
+  // const library, no iss
+  void list_albums(istringstream&, const Library& lib, const SceneBuilder&, const Scene&);
+  void print_album(istringstream& iss, const Library& lib, const SceneBuilder&, const Scene&);
+  void create_album(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void delete_album(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void add_to_album(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void remove_from_album(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  void sort_album(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&);
+  // scene cmds
+  void list_scene_obj_tmpls(istringstream&, const Library&, const SceneBuilder& builder,
+                            const Scene&);
+  void create_scene_obj_tmpl(istringstream& iss, const Library& lib, SceneBuilder& builder,
+                             const Scene&);
+  void remove_scene_obj_tmpl(istringstream& iss, const Library&, SceneBuilder& builder, const Scene&);
+  void spawn_scene_obj(istringstream& iss, const Library&, const SceneBuilder& builder, Scene& scene);
+  void set_scene_obj_pos(istringstream& iss, const Library&, const SceneBuilder&, Scene& scene);
+  void despawn_scene_obj(istringstream& iss, const Library&, const SceneBuilder&, Scene& scene);
+  void show_scene(istringstream& iss, const Library&, const SceneBuilder&, const Scene& scene);
+  void print_scene(istringstream&, const Library&, const SceneBuilder&, Scene& scene);
 }
 
 // This is a map of strings to functions. By declaring the type of the functions
@@ -163,7 +181,9 @@ namespace
 //
 // Note: Do NOT write a function to implement the "quit" command.
 // Instead, check for "quit" in the command loop in main.
-const map<string, std::function<void (istringstream&, Library&, SceneBuilder&, Scene&)>> command_funcs = {
+const map<
+  string, std::function<void (istringstream&, Library&, SceneBuilder&, Scene&)>
+> command_funcs = {
   // Add your command functions to this map.
   // Wrap the name of each function in std::function, as this will allow us to
   // use the proper const modifiers on the function parameters.
@@ -174,20 +194,20 @@ const map<string, std::function<void (istringstream&, Library&, SceneBuilder&, S
   {"rename_img", rename_img},
   {"query_imgs", query_imgs},
   {"list_albums", list_albums},
-  // {"print_album", },
-  // {"create_album", },
-  // {"delete_album", },
-  // {"add_to_album", },
-  // {"remove_from_album", },
-  // {"sort_album", },
-  // {"list_scene_obj_tmpls", },
-  // {"create_scene_obj_tmpl", },
-  // {"remove_scene_obj_tmpl", },
-  // {"spawn_scene_obj", },
-  // {"set_scene_obj_pos", },
-  // {"despawn_scene_obj", },
-  // {"show_scene", },
-  // {"print_scene", },
+  {"print_album", print_album},
+  {"create_album", create_album},
+  {"delete_album", delete_album},
+  {"add_to_album", add_to_album},
+  {"remove_from_album", remove_from_album},
+  {"sort_album", sort_album},
+  {"list_scene_obj_tmpls", list_scene_obj_tmpls},
+  {"create_scene_obj_tmpl", create_scene_obj_tmpl},
+  {"remove_scene_obj_tmpl", remove_scene_obj_tmpl},
+  {"spawn_scene_obj", spawn_scene_obj},
+  {"set_scene_obj_pos", set_scene_obj_pos},
+  {"despawn_scene_obj", despawn_scene_obj},
+  {"show_scene", show_scene},
+  {"print_scene", print_scene},
 };
 
 int main()
@@ -197,7 +217,7 @@ int main()
 
   // Declare Library, SceneBuilder, and Scene variables.
   Library lib;
-  SceneBuilder scene_builder;
+  SceneBuilder builder;
   Scene scene;
 
   string input;
@@ -248,7 +268,7 @@ int main()
     else {
       // gets & calls the function
       try {
-        command_funcs.at(input_cmd)(iss, lib, scene_builder, scene);
+        command_funcs.at(input_cmd)(iss, lib, builder, scene);
       }
       catch(cs3520::InvalidUserInputException &e) {
         cerr << e.what() << endl;
@@ -264,9 +284,11 @@ namespace
 
   // Library is const, istringstream, SceneBuilder and Scene are unused
   void list_imgs(istringstream&, const Library& lib, const SceneBuilder&, const Scene&) {
-    vector<shared_ptr<const Image>> images = lib.list_images();
+    vector<shared_ptr<const Image>> img_vect = lib.list_images();
     cout << "Images in library: " << endl;
-    copy(cbegin(images), cend(images), ostream_iterator<shared_ptr<const Image>>(cout, "\n"));
+    // print the image names in the vector
+    copy(cbegin(img_vect), cend(img_vect), ostream_iterator<shared_ptr<const Image>>(cout, "\n"));
+    // using the overload operator
     cout << "";
   }
 
@@ -280,9 +302,9 @@ namespace
   // Library is non-const, SceneBuilder and Scene are unused
   void remove_img(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&) {
     // QUESTION: does this have to be const string?
-    string name;
-    iss >> name;
-    lib.remove_image(name);
+    string img_name;
+    iss >> img_name;
+    lib.remove_image(img_name);
   }
 
   // Library is non-const, SceneBuilder and Scene are unused
@@ -293,18 +315,166 @@ namespace
     lib.rename_image(current_name, new_name);
   }
 
-  // finish the error msg & others
-  void query_imgs(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&) {
+  // calls the query_images function from Library
+  void query_imgs(istringstream& iss, const Library& lib, const SceneBuilder&, const Scene&) {
     string query;
     iss >> query;
-    lib.query_images(query);
+    vector<shared_ptr<const Image>> query_vect = lib.query_images(query);
+    if(query_vect.empty()) {
+      cout << "No images matching that query" << endl;
+    }
+    else {
+      cout << "Query results:" << endl;
+      // printing images & using operator overload
+      copy(cbegin(query_vect),
+           cend(query_vect),
+           ostream_iterator<shared_ptr<const Image>>(cout, "\n"));
+      cout << "";
+    }
   }
 
-  // finish
-  void list_albums(istringstream& iss, Library& lib, const SceneBuilder&, const Scene&) {
+  // calls get_album_names to print all the album names
+  void list_albums(istringstream&, const Library& lib, const SceneBuilder&, const Scene&) {
     cout << "Albums:" << endl;
+    vector<string> album_vect = lib.get_album_names();
+    copy(cbegin(album_vect), cend(album_vect), ostream_iterator<string>(cout, "\n"));
+    cout << "";
   }
-}
+
+  // unfinished
+  // prints every image of given album, throws error is album doesn't exist
+  void print_album(istringstream& iss, const Library& lib, const SceneBuilder&, const Scene&) {
+    string album_name;
+    iss >> album_name;
+    cout << album_name << " contents:" << endl;
+    // get the album
+    cs3520::Album album = lib.get_album(album_name);
+    // get the images in the album
+    vector<shared_ptr<Image>> img_vect = album.images;
+    // vector<shared_ptr<Image>> img_vect = album.get_img_vect();
+    // print the images in the vector
+    copy(cbegin(img_vect), cend(img_vect), ostream_iterator<shared_ptr<const Image>>(cout, "\n"));
+    cout << "";
+  }
+
+  // calls create_album to create an album, throws error if album with the name already exists
+  void create_album(istringstream&iss, Library& lib, const SceneBuilder&, const Scene&) {
+    string album_name;
+    iss >> album_name;
+    try {
+      lib.create_album(album_name);
+    }
+    catch(cs3520::InvalidUserInputException &e) {
+      cerr << e.what() << endl;
+    }
+  }
+
+  // deletes the given album name
+  void delete_album(istringstream&iss, Library& lib, const SceneBuilder&, const Scene&) {
+    string album_name;
+    iss >> album_name;
+    lib.delete_album(album_name);
+    // do i need to try catch the error ?
+  }
+
+  // add given image name to album name
+  void add_to_album(istringstream&iss, Library& lib, const SceneBuilder&, const Scene&) {
+    string album_name;
+    string img_name;
+    iss >> album_name >> img_name;
+    lib.add_to_album(album_name, img_name);
+    // do i need to try catch the error ?
+  }
+
+  // remove given image name from album name
+  void remove_from_album(istringstream&iss, Library& lib, const SceneBuilder&, const Scene&) {
+    string album_name;
+    string img_name;
+    iss >> album_name >> img_name;
+    lib.remove_from_album(album_name, img_name);
+  }
+
+  // sort images in the given album
+  void sort_album(istringstream&iss, Library& lib, const SceneBuilder&, const Scene&) {
+    string album_name;
+    iss >> album_name;
+    lib.sort_album(album_name);
+  }
+
+  // prints the scene object names in the scene builder
+  void list_scene_obj_tmpls(istringstream&, const Library&, const SceneBuilder& builder,
+                            const Scene&) {
+    cout << "Scene Object Templates:" << endl;
+    vector<string> scene_name_vect = builder.get_scene_object_template_names();
+    copy(cbegin(scene_name_vect), cend(scene_name_vect), ostream_iterator<string>(cout, "\n"));
+    cout << "";
+  }
+
+  // creates a scene tmpl object
+  void create_scene_obj_tmpl(istringstream& iss, const Library& lib, SceneBuilder& builder,
+                             const Scene&) {
+    string tmpl_name;
+    string img_name;
+    iss >> tmpl_name >> img_name;
+    // the image already exists in Library, just need to get it now  
+    Image img = *lib.get_image(img_name);
+    builder.create_scene_obj_template(tmpl_name, img);
+  }
+
+  // unfinished
+  // !!!!Does not delete any scene objects..?
+  void remove_scene_obj_tmpl(istringstream& iss, const Library&, SceneBuilder& builder,
+                             const Scene&) {
+    string tmpl_name;
+    iss >> tmpl_name;
+    builder.delete_scene_obj_template(tmpl_name);
+  }
+
+  // unfinished
+  // creates a scene from given template & adds it to scene
+  void spawn_scene_obj(istringstream& iss, const Library&, const SceneBuilder& builder,
+                       Scene& scene) {
+    string tmpl_name;
+    iss >> tmpl_name;
+    static int next_id = 1;
+    unique_ptr<cs3520::SceneObject> scene_obj = builder.instantiate_scene_obj(tmpl_name, next_id);
+    ++next_id;
+    // add scene object to the scene
+    scene.add_scene_obj(move(scene_obj));
+  }
+
+  // set position of object, don't need to error check coords
+  void set_scene_obj_pos(istringstream& iss, const Library&, const SceneBuilder&, Scene& scene) {
+    int object_id;
+    float x;
+    float y;
+    iss >> object_id >> x >> y;
+    sf::Vector2f position(x, y);
+    scene.set_scene_obj_position(object_id, position);
+  }
+
+  // remove & deallocates obj
+  void despawn_scene_obj(istringstream& iss, const Library&, const SceneBuilder&, Scene& scene) {
+    int object_id;
+    iss >> object_id;
+    scene.remove_scene_obj(object_id);
+  }
+
+  // renders with SFML
+  void show_scene(istringstream& iss, const Library&, const SceneBuilder&, const Scene& scene) {
+    int width;
+    int height;
+    iss >> width >> height;
+    sf::RenderWindow window(sf::VideoMode(width, height), "window");
+    scene.render(window);
+  }
+
+  // prints objects in the scene
+  void print_scene(istringstream&, const Library&, const SceneBuilder&, Scene& scene) {
+    scene.print(cout);
+  }
+
+} // namespace
 
 namespace
 {

@@ -9,7 +9,6 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <map>
 #include <set>
 // Add any additional #includes here
 namespace cs3520
@@ -196,7 +195,7 @@ namespace cs3520
     // if the requested album does not exist
     //
     // Throws InvalidUserInputException with the message
-    // "Image " + img_name + " already part of album " + album_name
+    // "Image " + img_name + "  not part of album " + album_name
     // if the requested image is not a part of that album.
     //
     // Runtime upper bounds:
@@ -220,81 +219,66 @@ namespace cs3520
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Declare any private member variables, private member functions,
     // or transparent comparator functors needed by your implementation here.
-    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
     std::vector<Album> m_albums;
     struct ImageCompare
     {
       using is_transparent = void;
       bool operator()(const std::shared_ptr<Image> &img, const std::string &name) const;
-      // {
-      //   return img->get_name() < name;
-      // }
       bool operator()(const std::string &name, const std::shared_ptr<Image> &img) const;
-      // {
-      //   return name < img->get_name();
-      // }
-      bool operator()(const std::shared_ptr<Image> &left, const std::shared_ptr<Image> &right) const;
-      // {
-      //   return left->get_name() < right->get_name();
-      // }
+      bool operator()(const std::shared_ptr<Image> &left,
+                      const std::shared_ptr<Image> &right) const;
     };
     std::set<std::shared_ptr<Image>, ImageCompare> m_images;
+    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
   };
 
   // Stores metadata (e.g., file path, in-library name) for an image imported
   // into the library.
   // You should implement the one constructor for this class inline (i.e., in this file).
-  class Image
-  {
-  public:
+  class Image {
+   public:
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Implement a constructor that takes in a std::filesystem::path and initializes
     // the Image's member variables. You must decide whether to take in the
     // path variable by value, pointer, or reference.
-    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
     Image(std::filesystem::path path);
+    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
 
-    const std::string &get_name() const
-    {
+    const std::string &get_name() const {
       return m_name;
     }
 
-    const std::filesystem::path &get_path() const
-    {
+    const std::filesystem::path &get_path() const {
       return m_path;
     }
 
-    void rename(const std::string &new_name)
-    {
+    void rename(const std::string &new_name) {
       m_name = new_name;
     }
 
-    std::ostream &print(std::ostream &os) const
-    {
+    std::ostream &print(std::ostream &os) const {
       os << std::make_shared<const Image>(*this);
       return os;
     }
 
-  private:
+   private:
     std::filesystem::path m_path;
     std::string m_name;
   };
 
   // Albums are used to let the user group Images into categories.
   // The implementation of this struct is provided for you.
-  struct Album
-  {
+  struct Album {
     std::string name;
     std::vector<std::shared_ptr<Image>> images;
 
     Album(const std::string &name) : name(name) {}
 
     // This operator overload lets us sort albums by name.
-    bool operator<(const Album &rhs) const
-    {
+    bool operator<(const Album &rhs) const {
       return name < rhs.name;
     }
   };
-}
+}  // namespace cs3520
 
 #endif // ASSET_LIB_HPP

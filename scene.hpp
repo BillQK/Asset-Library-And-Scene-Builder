@@ -13,17 +13,15 @@
 
 #include "asset_lib.hpp"
 
-namespace cs3520
-{
+namespace cs3520 {
   class SceneObjectTemplate;
   class SceneObject;
 
   // Maintains a collection of SceneObjects and provides methods
   // for updating objects in the scene and rendering the scene.
   // TASK: Implement the member functions of the Scene class in scene.cpp
-  class Scene
-  {
-  public:
+  class Scene {
+   public:
     // Adds the given object to the scene.
     // SceneObjects should be created with unique IDs not specified by the user.
     // This method does not check to see whether an object with the same ID
@@ -65,19 +63,19 @@ namespace cs3520
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Declare any private member variables, private member functions,
     // or transparent comparator functors needed by your implementation here.
-    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
-    struct SceneObjectComparator
-    {
-      using is_transparent = void;
+   struct SceneObjectComparator {
+     using is_transparent = void;
 
-      bool operator()(const std::unique_ptr<SceneObject> &scene_obj, const int id) const;
+     bool operator()(const std::unique_ptr<SceneObject> &scene_obj, const int id) const;
 
-      bool operator()(const int id, const std::unique_ptr<SceneObject> &scene_obj) const;
+     bool operator()(const int id, const std::unique_ptr<SceneObject> &scene_obj) const;
 
-      bool operator()(const std::unique_ptr<SceneObject> &lhs, const std::unique_ptr<SceneObject> &rhs) const;
-    };
-
-    std::set<std::unique_ptr<SceneObject>, SceneObjectComparator> m_scene_objects;
+     bool operator()(const std::unique_ptr<SceneObject> &lhs,
+                     const std::unique_ptr<SceneObject> &rhs) const;
+   };
+   // set storing objects in the scene
+   std::set<std::unique_ptr<SceneObject>, SceneObjectComparator> m_scene_objects;
+   // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
   };
 
   // Maintains a collection of SceneObjectTemplates.
@@ -127,31 +125,28 @@ namespace cs3520
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Declare any private member variables, private member functions,
     // or transparent comparator functors needed by your implementation here.
-    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
     std::map<std::string, SceneObjectTemplate> m_templates;
+    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
   };
 
   // SceneObjectTemplate instances are the blueprints from which we can
   // create SceneObjects. SceneObjectTemplates have a user-specified name
   // and a texture loaded from an image from our Library.
-  class SceneObjectTemplate
-  {
-  public:
+  class SceneObjectTemplate {
+   public:
     // TASK: Implement two constructors. One should take in only a name as a string, and
     // the other should take in a name as a string followed by the cs3520::Image
     // to initialize the template's texture from.
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
-    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
     SceneObjectTemplate(const std::string &name);
     SceneObjectTemplate(const std::string &name, const cs3520::Image image);
+    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
     // TASK: Implement get_name, get_texture, and set_texture
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
-    const sf::Texture &get_texture() const
-    {
+    const sf::Texture &get_texture() const {
       return m_texture;
     }
-    const std::string &get_name()
-    {
+    const std::string &get_name() {
       return m_name;
     }
     void set_texture(const cs3520::Image &img);
@@ -171,9 +166,8 @@ namespace cs3520
   // were instatiated gets deleted.
   //
   // TASK: Implement the member functions of SceneObject.
-  class SceneObject
-  {
-  public:
+  class SceneObject {
+   public:
     // Constructs a SceneObject from the given template.
     // It is up to you to decide whether to put the implementation of
     // this constructor here in the .hpp file or in the .cpp file.
@@ -184,6 +178,7 @@ namespace cs3520
 
     // Gets the position of this scene object.
     const sf::Vector2f &get_position() const;
+
     // Sets the position of this scene object.
     void set_position(const sf::Vector2f &pos);
 
@@ -217,8 +212,8 @@ namespace cs3520
     sf::Sprite m_sprite;
     // ------------ vvvvvvvvvvvv MAKE CHANGES HERE vvvvvvvvvvvvvvvv --------------------
     // Add any private member variables you need here.
-    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
     std::weak_ptr<SceneObjectTemplate> m_tmpl;
+    // ------------ ^^^^^^^^^^^^ MAKE CHANGES HERE ^^^^^^^^^^^^^^^^ --------------------
   };
 }
 
