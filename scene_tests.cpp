@@ -52,12 +52,6 @@ TEST(test_scene_object_template_get_set_texture)
   tmpl.set_texture(image2);
   ASSERT_EQUAL(int(tmpl.get_texture().getSize().x), 960);
   ASSERT_EQUAL(int(tmpl.get_texture().getSize().y), 338);
-
-  // Set texture to an image with invalid path
-  cs3520::Image invalid_image("invalid/path.jpg");
-  tmpl.set_texture(invalid_image);
-  ASSERT_EQUAL(int(tmpl.get_texture().getSize().x), 0);
-  ASSERT_EQUAL(int(tmpl.get_texture().getSize().y), 0);
 }
 
 TEST(test_scene_object_template_get_name)

@@ -7,9 +7,4 @@ list_scene_obj_tmpls
 spawn_scene_obj crab
 set_scene_obj_pos 1 300 300
 print_scene
-
-despawn_scene_obj 1
-print_scene
-remove_scene_obj_tmpl crab
-
-quit
+show_scene 

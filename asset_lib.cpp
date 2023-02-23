@@ -223,7 +223,6 @@ namespace cs3520
     auto it = lower_bound(m_albums.begin(), m_albums.end(), album_name,
                           [](const auto &album, const string &name)
                           { return album.name < name; });
-
     if (it != m_albums.end() && it->name == album_name)
     {
       throw InvalidUserInputException("Album " + album_name + " already exists");
