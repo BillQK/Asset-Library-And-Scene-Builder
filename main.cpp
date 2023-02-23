@@ -276,7 +276,7 @@ namespace
   // Library is const, istringstream, SceneBuilder and Scene are unused
   void list_imgs(istringstream&, const Library& lib, const SceneBuilder&, const Scene&) {
     vector<shared_ptr<const Image>> img_vect = lib.list_images();
-    cout << "Images in library: " << endl;
+    cout << "Images in library:" << endl;
     // print the image names in the vector
     copy(cbegin(img_vect), cend(img_vect), ostream_iterator<shared_ptr<const Image>>(cout, "\n"));
     // using the overload operator

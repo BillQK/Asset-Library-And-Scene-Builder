@@ -64,6 +64,7 @@ namespace cs3520 {
   void Scene::set_scene_obj_position(int id, sf::Vector2f position) {
     auto it = find_scene_objects(m_scene_objects, id);
     (*it)->set_position(position);
+    // set_position(position);
   }
 
   // render scene to given window

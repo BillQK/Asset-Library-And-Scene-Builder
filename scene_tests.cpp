@@ -6,7 +6,7 @@
 #include "scene.hpp"
 #include "unit_test_framework.h"
 #include "asset_lib.hpp"
-#include "asset_lib.cpp"
+
 
 using namespace std;
 
@@ -200,7 +200,7 @@ TEST(test_get_scene_object_template_names)
   cs3520::SceneBuilder sceneBuilder;
 
   sceneBuilder.create_scene_obj_template("crab", cs3520::Image("imgs/crabster.jpg"));
-  sceneBuilder.create_scene_obj_template("fish", cs3520::Image("imgs/fishy.jpg"));
+  sceneBuilder.create_scene_obj_template("fish", cs3520::Image("imgs/lobster_,ink.jpg"));
 
   std::vector<std::string> expected = {"crab", "fish"};
   std::vector<std::string> actual = sceneBuilder.get_scene_object_template_names();
@@ -214,8 +214,8 @@ TEST(test_get_scene_object_template_names_sorted)
 
   // Add scene object templates in unsorted order
   sceneBuilder.create_scene_obj_template("template_c", cs3520::Image("imgs/crabster.jpg"));
-  sceneBuilder.create_scene_obj_template("template_a", cs3520::Image("imgs/fishy.jpg"));
-  sceneBuilder.create_scene_obj_template("template_b", cs3520::Image("imgs/fishy.jpg"));
+  sceneBuilder.create_scene_obj_template("template_a", cs3520::Image("imgs/lobster_link.jpg"));
+  sceneBuilder.create_scene_obj_template("template_b", cs3520::Image("imgs/lobster_link.jpg"));
 
   // Get the template names and check if they are sorted in lexicographic order
   std::vector<std::string> templateNames = sceneBuilder.get_scene_object_template_names();
