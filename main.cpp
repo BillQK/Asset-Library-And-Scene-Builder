@@ -335,17 +335,25 @@ namespace
   // unfinished
   // prints every image of given album, throws error is album doesn't exist
   void print_album(istringstream& iss, const Library& lib, const SceneBuilder&, const Scene&) {
-    string album_name;
-    iss >> album_name;
-    cout << album_name << " contents:" << endl;
-    // get the album
-    cs3520::Album album = lib.get_album(album_name);
-    // get the images in the album
-    vector<shared_ptr<Image>> img_vect = album.images;
-    // vector<shared_ptr<Image>> img_vect = album.get_img_vect();
-    // print the images in the vector
-    copy(cbegin(img_vect), cend(img_vect), ostream_iterator<shared_ptr<const Image>>(cout, "\n"));
-    cout << "";
+    // if album not found, will just skip to throwing the exception
+    try {
+      string album_name;
+      iss >> album_name;
+
+      // get the album
+      cs3520::Album album = lib.get_album(album_name);
+      cout << album_name << " contents:" << endl;
+      
+      // get the images in the album
+      vector<shared_ptr<Image>> img_vect = album.images;
+
+      // print the images in the vector
+      copy(cbegin(img_vect), cend(img_vect), ostream_iterator<shared_ptr<const Image>>(cout, "\n"));
+      cout << "";
+    } 
+    catch (cs3520::InvalidUserInputException& e) {
+      cerr << e.what() << endl;
+    }
   }
 
   // calls create_album to create an album, throws error if album with the name already exists
